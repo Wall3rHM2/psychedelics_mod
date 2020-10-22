@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "sdrugs/blotters/sroad"
+	"$model" "1"
+	"$HalfLambert" "1"
+}

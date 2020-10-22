@@ -1,0 +1,10 @@
+"Modulate"
+{
+	"%keywords" "tf"
+	"$model" "1"
+	"$basetexture" "sdrugs/shrooms_bg"
+//	"$additive" "1"
+	"$mod2x" "1"
+//	"$color2" "[2 2 2]"
+}
+
