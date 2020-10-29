@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics_mod/lsd/lysergic_acid/glass"
+	"$translucent" 1
+}

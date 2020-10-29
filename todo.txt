@@ -1,0 +1,4 @@
+-Fazer os materials de efeitos visuais ser independente do TF2
+-Fazer os normalmap para os modelos flask e lysergic_acid e os seguintes models.
+-Organizar os modelos de flask e lysergic_acid em models/psychedelics_mod/lsd/flask e models/psychedelics_mod/lsd/lysergic_acid, respectivamente
+-Organizar as texturas de flask e lysergic_acid em materials\models\psychedelics_mod\lsd\flask e materials\models\psychedelics_mod\lsd\lysergic_acid, respectivamente.

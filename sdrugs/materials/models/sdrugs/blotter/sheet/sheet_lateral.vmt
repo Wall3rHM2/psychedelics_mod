@@ -1,6 +1,0 @@
-"VertexlitGeneric"
-{
-	"$basetexture" "models/sdrugs/blotter/sheet/sheet_lateral"
-	"$model" "1"
-	"$HalfLambert" "1"
-}

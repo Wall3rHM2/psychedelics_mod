@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics_mod/lsd/flask/flask"
+	"$translucent" 1
+	"$bumpMap"				"models/psychedelics_mod/lsd/flask/flask_normal"
+	"$normalmapalphaenvmapmask" "1"
+
+	"$surfaceprop" "glass"
+	"$model" 1
+
+	$phong 1
+	$phongboost 0.8
+	$phongfresnelranges "[1 2 3]"
+	$phongexponent 4
+	$phongalbedotint 1	
+
+	
+
+}
+
