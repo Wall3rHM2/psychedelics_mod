@@ -162,8 +162,8 @@ local function DoShrooms()
   if math.sin(senoA)>math.sin(senoA+0.001) then  timer.Remove("ShroomssenoA") end --gets only the highest sin from senoA
  end)
  hook.Add("RenderScreenspaceEffects","SDrugs_ShroomsEffect",function()  --main render hook
-  DrawMaterialOverlay( "sdrugs/shrooms", (math.sin(senoA))*(Mg/3000) )
-  DrawMaterialOverlay( "sdrugs/cubism", (math.sin(senoB))*(Mg/3000) )
+  DrawMaterialOverlay( "psychedelics/shrooms", (math.sin(senoA))*(Mg/3000) )
+  DrawMaterialOverlay( "psychedelics/cubism", (math.sin(senoB))*(Mg/3000) )
   DrawColorModify(cModify)
   if 1-(math.sin(senoA)/2.75*Mg/50)>=0.2 then
    DrawMotionBlur( 1-(math.sin(senoA)/2.5*Mg/50),1,0)

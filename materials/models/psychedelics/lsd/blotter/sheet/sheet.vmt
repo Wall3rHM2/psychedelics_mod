@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics/lsd/blotter/sheet/sheet"
+	"$selfIllum"			0
+	"$translucent"			0
+	"$alphatest"			0
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+
+	"$bumpMap"				"models/psychedelics/lsd/blotter/sheet/sheet_nrm"
+
+	
+
+}

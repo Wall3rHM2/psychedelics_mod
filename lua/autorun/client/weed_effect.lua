@@ -78,7 +78,7 @@ local function Effect()
         DrawToyTown( math.abs( math.sin(WeedI/1.65)*((1+THC/100)) ), ScrH() )
         DrawColorModify(cModify)
         if THC>50 then
-         DrawMaterialOverlay( "sdrugs/lsd",(math.sin(WeedI)/10)*(THC/1500))
+         DrawMaterialOverlay( "psychedelics/lsd",(math.sin(WeedI)/10)*(THC/1500))
         end
        end)
        hook.Add("AdjustMouseSensitivity","SDrugs_weed_msens",function(msens)

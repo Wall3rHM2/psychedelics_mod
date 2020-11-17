@@ -185,8 +185,8 @@ local function DoLSD()
   if math.sin(senoA)>math.sin(senoA+0.001) then  timer.Remove("LSDsenoA") end --gets only the highest sin from senoA
  end)
  hook.Add("RenderScreenspaceEffects","SDrugs_LSDEffect",function()  --main render hook
-  DrawMaterialOverlay( "sdrugs/lsd", (math.sin(senoA))*(Ug/150000) )
-  DrawMaterialOverlay( "sdrugs/cubism", (math.sin(senoB))*(Ug/3000) )
+  DrawMaterialOverlay( "psychedelics/lsd", (math.sin(senoA))*(Ug/150000) )
+  DrawMaterialOverlay( "psychedelics/cubism", (math.sin(senoB))*(Ug/3000) )
   DrawColorModify(cModify)
   if 1-(math.sin(senoA)/2.75*Ug/50)>=0.04 then
    DrawMotionBlur( 1-(math.sin(senoA)/2.5*Ug/50),1,0)

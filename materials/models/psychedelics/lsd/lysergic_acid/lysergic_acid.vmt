@@ -1,0 +1,27 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics/lsd/lysergic_acid/lysergic_acid"
+	"$selfIllum"			0
+	"$translucent"			0
+	"$alphatest"			0
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+
+	"$bumpMap"				"models/psychedelics/lsd/lysergic_acid/lysergic_acid_nrm"
+	"$normalmapalphaenvmapmask" "1"
+	"$surfaceprop" "gravel"
+	"$model" 1
+
+	$phong 1
+	$phongboost 0.1
+	$phongfresnelranges "[1 2 3]"
+	$phongexponent 4
+	$phongalbedotint 1	
+
+	$detail detail\plaster_detail_01
+	$detailscale 7.74
+	$detailblendfactor 0.8
+	$detailblendmode 0
+	
+
+}

@@ -1,0 +1,22 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics/lsd/lysergic_acid/plastic"
+	"$selfIllum"			0
+	"$translucent"			0
+	"$alphatest"			0
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+
+	"$bumpMap"				"models/psychedelics/lsd/lysergic_acid/plastic_nrm"
+	"$normalmapalphaenvmapmask" "1"
+	"$surfaceprop" "plasticl"
+	"$model" 1
+
+	$phong 1
+	$phongboost 0.1
+	$phongfresnelranges "[1 2 3]"
+	$phongexponent 4
+	$phongalbedotint 1	
+	
+
+}
