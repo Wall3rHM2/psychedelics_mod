@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/psychedelics/lsd/phosphorous_oxychloride/glass"
+	"$translucent" 1
+	"$bumpMap"				"models/psychedelics/lsd/phosphorous_oxychloride/glass_nrm"
+	"$normalmapalphaenvmapmask" "1"
+
+	"$surfaceprop" "glass"
+	"$model" 1
+
+	$phong 1
+	$phongboost 0
+	$phongfresnelranges "[1 2 3]"
+	$phongexponent 4
+	$phongalbedotint 1	
+
+	
+
+}
+

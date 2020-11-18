@@ -1,3 +1,2 @@
--terminar models lsd
--fazer models shrooms
--terminar addon
+-Fazer os materials de efeitos visuais ser independente do TF2
+-Concertar phong dos models quando acabar
