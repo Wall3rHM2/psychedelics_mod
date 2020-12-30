@@ -1,8 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/psychedelics/lsd/phosphorous_oxychloride/glass"
+	"$basetexture" "models/psychedelics/lsd/phosphorus_oxychloride/glass"
 	"$translucent" 1
-	"$bumpMap"				"models/psychedelics/lsd/phosphorous_oxychloride/glass_nrm"
+	"$bumpMap"				"models/psychedelics/lsd/phosphorus_oxychloride/glass_nrm"
 	"$normalmapalphaenvmapmask" "1"
 
 	"$surfaceprop" "glass"
