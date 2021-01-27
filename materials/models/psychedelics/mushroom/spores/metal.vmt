@@ -1,6 +1,6 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/psychedelics/mushroom/mushroom_2/stem"
+	"$basetexture" "models/psychedelics/mushroom/spores/metal"
 	"$selfIllum"			0
 	"$translucent"			0
 	"$alphatest"			0
@@ -8,9 +8,9 @@
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 
-	"$bumpMap"				"models/psychedelics/mushroom/mushroom_2/stem"
+	"$bumpMap"				"models/psychedelics/mushroom/spores/metal_nrm"
 	"$normalmapalphaenvmapmask" "1"
-	"$surfaceprop" "plastic"
+	"$surfaceprop" "metal"
 	"$model" 1
 
 	$phong 1
@@ -18,6 +18,11 @@
 	$phongfresnelranges "[1 2 3]"
 	$phongexponent 4
 	$phongalbedotint 1	
+
+	$detail detail\metal_detail_01
+	$detailscale 4.283
+	$detailblendfactor .65
+	$detailblendmode 0
 
 	$envmap env_cubemap
 	$envmapsaturation 1

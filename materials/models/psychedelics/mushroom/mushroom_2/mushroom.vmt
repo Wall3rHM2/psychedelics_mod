@@ -1,6 +1,6 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/psychedelics/mushroom/mushroom_1/stem"
+	"$basetexture" "models/psychedelics/mushroom/mushroom_2/mushroom"
 	"$selfIllum"			0
 	"$translucent"			0
 	"$alphatest"			0
@@ -8,7 +8,7 @@
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 
-	"$bumpMap"				"models/psychedelics/mushroom/mushroom_1/stem"
+	"$bumpMap"				"models/psychedelics/mushroom/mushroom_2/mushroom_nrm"
 	"$normalmapalphaenvmapmask" "1"
 	"$surfaceprop" "plastic"
 	"$model" 1
