@@ -1,8 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/psychedelics/lsd/flask/flask"
+	"$basetexture" "models/psychedelics/mushroom/substrate/glass"
 	"$translucent" 1
-	"$bumpMap"				"models/psychedelics/lsd/flask/flask_nrm"
+	"$bumpMap"				"models/psychedelics/mushroom/substrate/glass_nrm"
 	"$normalmapalphaenvmapmask" "1"
 
 	"$surfaceprop" "glass"
@@ -10,7 +10,7 @@
 
 	$envmap "env_cubemap"
 	$normalmapalphaenvmapmask 1
-	$envmaptint "[.4 .4 .4]"
+	$envmaptint "[.2 .2 .2]"
 
 	$phong 1
 	$phongboost 0

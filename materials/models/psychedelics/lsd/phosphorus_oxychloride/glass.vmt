@@ -8,11 +8,19 @@
 	"$surfaceprop" "glass"
 	"$model" 1
 
+	$envmap "env_cubemap"
+	$normalmapalphaenvmapmask 1
+	$envmaptint "[.3 .3 .3]"
+
 	$phong 1
-	$phongboost 0
+	$phongboost .1
 	$phongfresnelranges "[1 2 3]"
 	$phongexponent 4
 	$phongalbedotint 1	
+
+	$rimlight               1
+	$rimlightexponent      1
+	$rimlightboost         1
 
 	
 
