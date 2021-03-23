@@ -3,11 +3,11 @@ AddCSLuaFile("cl_init.lua")
 
 include("shared.lua")
 local subMaterial="psychedelics/blotters/bycicle_day"
-local posx={"0.0","0.1","0.2","0.3","0.4"}
+local posx={"0.0","0.1","0.2","0.3","0.4"} --x positions for the 1sheet blotter
 local posx2={"0.5","0.6","0.7","0.8","0.9"}
 
-local posy={"-0.1","0.0","0.1","0.2","0.3"}
-local posy2={"0.4","0.5","0.6","0.7","0.8"}
+local posy={"0.0","0.1","0.2","0.3","0.4"} --y positions for the 1sheet blotter
+local posy2={"0.5","0.6","0.7","0.8","0.9"}
 function ENT:Initialize()
   self:SetModel("models/psychedelics/lsd/blotter/1sheet.mdl")
   self:PhysicsInit(SOLID_VPHYSICS)
@@ -15,30 +15,42 @@ function ENT:Initialize()
   self:SetSolid(SOLID_VPHYSICS)
   self:GetPhysicsObject():Wake()
   self:Activate()
-  timer.Simple(0.1,function()
-    local sheet1=self
-    local data=sheet1:GetNWString("psychedelics_blotter_data","psychedelics_blotter_-psychedelics/blotters/bycicle_day-1-1")
-    local matpos=sheet1:GetNWInt("matpos",1)
-    local dataTab=string.Split(	data,"-"	)
+  local function update_1blotter(ply,ent,data_mod) --apply modifiers from duplicator data
+    if not SERVER then return end
+    quantity=data_mod.quantity
+    self:SetNWInt("psychedelics_quantity",quantity)
+    type=data_mod.type
+    self:SetNWString("psychedelics_type",type)
+    data=data_mod.data
+    self:SetNWString("psychedelics_data",data)
+    matpos=data_mod.matpos
+    self:SetNWInt("psychedelics_matpos",matpos)
+    local dataTab=string.Split( data,"-"  )
     subMaterial=dataTab[2]
+    self:SetNWString("psychedelics_subMaterial",subMaterial)
     local tmaterial=string.Split(subMaterial,"/")
-    local x=tonumber(dataTab[3])
-    local i=tonumber(dataTab[4])
+    local x=string.Split(data,"-")
+    x=tonumber(x[3])
+    local i=string.Split(data,"-")
+    i=tonumber(i[#i])
+    local sheet1=self
     local pos1="0.0"
     local pos2="0.0"
-    if matpos==1 or matpos==3 then pos1=posx2[x]					-- corrects the x position of the submaterial
-    elseif matpos==2 or matpos==4 then pos1=posx[x] end
-    if matpos==1 or matpos==2 then pos2=posy[i]
-    else pos2=posy2[i] end 						-- corrects the y position of the submaterial
 
+    if matpos==1 or matpos==3 then pos1=posx2[x]         -- corrects the x position of the submaterial
+    elseif matpos==2 or matpos==4 then pos1=posx[x] end
+    if matpos==1 or matpos==2 then pos2=posy2[i]
+    else pos2=posy[i] end  
+    if subMaterial=="" then  return end
     net.Start("update_blotter_1sheet")
     net.WriteString(subMaterial)
     net.WriteString(pos1)
     net.WriteString(pos2)
-    net.WriteString("psychedelics_1sheet_10".."-"..tmaterial[#tmaterial].."-"..tostring(matpos).."-"..tostring(x).."-"..tostring(i))
+    net.WriteString("psychedelics_1sheet_".."-"..tmaterial[#tmaterial].."-"..tostring(x).."-"..tostring(i))
     net.WriteEntity(sheet1)
     net.Broadcast()
-  end)
+  end
+  duplicator.RegisterEntityModifier("psychedelics_data",update_1blotter)
 end
 	
 function ENT:Use( activator, caller )

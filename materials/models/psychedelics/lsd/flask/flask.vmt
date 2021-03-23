@@ -3,7 +3,7 @@
 	"$basetexture" "models/psychedelics/lsd/flask/flask"
 	"$translucent" 1
 	"$bumpMap"				"models/psychedelics/lsd/flask/flask_nrm"
-	"$normalmapalphaenvmapmask" "1"
+
 
 	"$surfaceprop" "glass"
 	"$model" 1

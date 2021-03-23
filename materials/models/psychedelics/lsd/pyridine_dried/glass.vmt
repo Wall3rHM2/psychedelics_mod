@@ -9,7 +9,6 @@
 	"$model" 1
 
 	"$bumpMap"				"models/psychedelics/lsd/pyridine_dried/glass_nrm"
-	"$normalmapalphaenvmapmask" "1"
 	
 
 	$phong 1

@@ -3,7 +3,7 @@
 	"$basetexture" "models/psychedelics/lsd/phosphorus_pentachloride/glass"
 	"$translucent" 1
 	"$bumpMap"				"models/psychedelics/lsd/phosphorus_pentachloride/glass_nrm"
-	"$normalmapalphaenvmapmask" "1"
+
 
 	"$surfaceprop" "glass"
 	"$model" 1
