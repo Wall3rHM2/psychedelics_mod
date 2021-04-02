@@ -6,7 +6,6 @@
 		 	"$fallbackmaterial" "psychedelics/shrooms_dx80"
 	}
 
-	"%keywords" "tf"
 	"$refractamount" ".02"
 	"$refracttint" "{255 255 255}"
 	"$refractblur" "1"
@@ -14,8 +13,7 @@
 
 	"$scale" "[2 2]"
 
-	"$bumpmap" "dev/water_dudv"
-	"$normalmap" "water/tfwater001_normal"
+	"$normalmap" "psychedelics/textures/mushroom"
 	"$bumpframe" "0"
 
 

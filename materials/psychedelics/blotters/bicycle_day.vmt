@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture"	"psychedelics/blotters/bicycle_day"
+	"$model" "1"
+	"$HalfLambert" "1"
+}

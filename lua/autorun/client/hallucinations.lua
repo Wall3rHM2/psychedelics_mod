@@ -1,5 +1,3 @@
---local lp=LocalPlayer()
-print("Loaded Hallucinations")
 hook.Add("InitPostEntity", "psychedelics_startup",function() --begin of main hook
 local Sounds={ --sounds for auditory hallucinations
 	"vo/ravenholm/shotgun_overhere.wav",

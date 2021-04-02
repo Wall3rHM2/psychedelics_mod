@@ -21,15 +21,15 @@
 	$envmaptint "[0.01 0.01 0.01]"
 
 	$phong 1
-	$phongboost 0.1
+	$phongboost 0.01
 	$phongfresnelranges "[1 2 3]"
-	$phongexponent 4
+	$phongexponent 1
 	$phongalbedotint 1	
 
 
 	$rimlight               1
-		$rimlightexponent      25
-		$rimlightboost         3
+	$rimlightexponent      5
+	$rimlightboost         1
 	
 
 }

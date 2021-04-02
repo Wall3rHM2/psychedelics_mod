@@ -2,13 +2,10 @@
 if SERVER then
 	util.AddNetworkString("psychedelics_hintmessage")
 	util.AddNetworkString("update_blotter_sheet")
-	util.AddNetworkString("update_blotter_25sheet")
-	util.AddNetworkString("update_blotter_5sheet")
-	util.AddNetworkString("update_blotter_1sheet")
 end
 
 if CLIENT then
-	local debug="pqp43"
+	--local debug=""
 	net.Receive("psychedelics_hintmessage",function(len,ply)
 		local text=net.ReadString()
 		local type=net.ReadInt(32)
@@ -27,9 +24,10 @@ if CLIENT then
 		["$vertexalpha"] = 0,
 		["$vertexcolor"] = 1
 		};  
-		CreateMaterial(name..debug,"VertexLitGeneric", matTable)
-		ent:SetSubMaterial(0,"!"..name..debug)
+		CreateMaterial(name,"VertexLitGeneric", matTable)
+		ent:SetSubMaterial(0,"!"..name)
 	end)
+	--[[ --below is the old system of updating blotters, dont work very well on dedicated servers
 	net.Receive("update_blotter_25sheet",function(len,ply) 
 		local basematerial=net.ReadString()
 		local pos1=net.ReadString()
@@ -76,5 +74,5 @@ if CLIENT then
 		};  
 		CreateMaterial(name..debug,"VertexLitGeneric", matTable)
 		ent:SetSubMaterial(0,"!"..name..debug)
-	end)
+	end) --]]
 end

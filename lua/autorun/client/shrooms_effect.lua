@@ -1,267 +1,276 @@
-local DrugCount=0
-local Duration={Onset=0.01,Total=30} --tempo total=horas do efeito na vida real*30    
-                                  -- ex:3*30=90     --->3 horas      >30 valor constante
-local TimerOnset="SDrugs_shrooms_onset"
-local TimerTotal="SDrugs_shrooms_total"
-local Mg=0
-local senoA=0
-local senoB=0
-local dsp=0
-local FOV=0
-local Multi=0.5
-local Increase=0.01
-local canRemove=0
-local cModify={
-  [ "$pp_colour_addr" ] = 0.00,
-  [ "$pp_colour_addg" ] = 0.00,
-  [ "$pp_colour_addb" ] = 0,
-  [ "$pp_colour_brightness" ] = 0,
-  [ "$pp_colour_contrast" ] = 1,
-  [ "$pp_colour_colour" ] = 1,
-  [ "$pp_colour_mulr" ] = 0.1,
-  [ "$pp_colour_mulg" ] = 0.1,
-  [ "$pp_colour_mulb" ] = 0.1
+--mudar a funcao hallucination para apenas ser usado quando o O >= 0.6 e caso seja menor que isso, tentar novamente em 1 segundo
+--mudar a funcao cubism para ser usado apenas quando O>= 0.6
+--mudar a funcao FOV para ser usado apenas quando O>= 0.6
+local Duration = {Onset=0.01,Total=160} --effect time = hours of the effect irl*30
+											-- eg.:3*30=90		 --->3 hours		 >30 constant value
+local trip_presets = {Hallucinations=false, FOV=false, Cubism=false} 
+--presets used to set which components the random trip will have
+local Onset_str = "psychedelics_shroom_onset"
+local Total_str = "psychedelics_shroom_total"
+local Ug = 0
+local O = 0 -- Variable used to lerp the DrawMaterialOverlay
+local C = 0 -- Variable used to lerp the cubism
+local can_cubism = true
+local Max_overlay = 0
+local mult_blur = 0 --used to multiply the motion blur
+local FOV = 75 --75 is the default value
+local active = false
+local components= {
+	"$pp_colour_colour",
+	"$pp_colour_mulr",
+	"$pp_colour_mulg",
+	"$pp_colour_mulb"
 }
-local function ClearShrooms(mult)
- local multb=mult
- if mult==nil then mult=1 end
- timer.Remove("ShroomssenoA")
- timer.Remove("ShroomssenoB")
- timer.Remove("SDrugs_Shrooms_dsp")
- timer.Remove("SDrugs_ShroomsEffect")
- timer.Remove("kickin_Shrooms")
- timer.Remove("SDrugs_Shrooms_colour")
- timer.Remove("SDrugs_Shrooms_LerpColor")
- timer.Remove("SDrugs_Shrooms_LerpColor_$pp_colour_mulr")
- timer.Remove("SDrugs_Shrooms_LerpColor_$pp_colour_mulg")
- timer.Remove("SDrugs_Shrooms_LerpColor_$pp_colour_mulb")
- timer.Remove("SDrugs_Shrooms_LerpColor_$pp_colour_colour")
- local function RemoveEffects()
-  hook.Remove("RenderScreenspaceEffects","SDrugs_ShroomsEffect")
-  hook.Remove("CalcView","SDrugs_ShroomsCalcView")
-  cModify["$pp_colour_colour"]=1
-  cModify["$pp_colour_mulr"]=0.1
-  cModify["$pp_colour_mulg"]=0.1
-  cModify["$pp_colour_mulb"]=0.1
-  Mg=0
-  canRemove=0
-  senoA=0
-  senoB=0
-  dsp=0
-  FOV=0
-  LocalPlayer():SetDSP(0)
- end
- local function fixMg(mult) --return to default value the dosage variable, responsible for some calculations
-  if Mg>=10 then --checks if its higher than a acceptable value
-   if (Mg-10*mult>=20)==false then  --checks if the mul is not too much to decrease the variable
-    Mg=Mg-10 
-    if 10*(mult/2.5)>10 then timer.Create("fixMg",0.01,1,function() fixMg(mult/2.5)  end)
-    else timer.Create("fixMg",0.01,1,function() fixMg(mult) end)  end
-   else
-    Mg=Mg-(10*mult)
-    timer.Create("fixMg",0.01,1,function() fixMg(mult) end)
-   end
-  elseif canRemove==2 then RemoveEffects()
-  end 
- end
-
- local function FixColor(name,default,mult,multb) --
-  local sum=0.05
-  if name!="$pp_colour_colour" then sum=0.01 end
-  if cModify[name]>default+0.2 then   --if its higher than a acceptable value to insta remove
-   if (cModify[name]-sum*mult>default-0.2)==false then --checks if the mul is not too much to decrease the variable
-    cModify[name]=cModify[name]-sum
-    if mult*sum>sum then mult=mult/2.5 end
-   else
-    cModify[name]=cModify[name]-(sum*mult)
-   end
-   timer.Create("SDrugs_Shrooms_FixColor_"..name,0.01,1,function() FixColor(name,default,mult,multb) end)
-  elseif cModify[name]<default-0.2 then    --if its lower than a acceptable value to insta remove
-   if (cModify[name]+sum*mult<default+0.2)==false then --checks if the mul is not too much to add the variable
-    cModify[name]=cModify[name]+sum
-    if mult*sum>sum then mult=mult/2.5 end
-   else
-    cModify[name]=cModify[name]+(sum*mult)
-   end
-   timer.Create("SDrugs_Shrooms_FixColor_"..name,0.01,1,function() FixColor(name,default,mult,multb) end)
- else --if the value is between the acceptable values, than it can be insta removed
-   cModify[name]=default
-   if cModify["$pp_colour_mulr"]==0.1 and cModify["$pp_colour_mulg"]==0.1
-   and cModify["$pp_colour_mulb"]==0.1 and cModify["$pp_colour_colour"]==1 then
-    if canRemove==0 then canRemove=1 elseif canRemove==1 then canRemove=2 fixMg(0.5*multb) end
-   else
-   end
-  end
- end
- FixColor("$pp_colour_mulr",0.1,mult,mult)
- FixColor("$pp_colour_mulg",0.1,mult,mult)
- FixColor("$pp_colour_mulb",0.1,mult,mult)
- FixColor("$pp_colour_colour",1,mult,mult)
- --local multb=mult
- local function fixsenoA(mult,multb) --return to default value the senoA variable, responsible for render calculations
-  if senoA>=0.002 then --checks if its higher than a acceptable value
-   if (senoA-0.001*mult>=0.002)==false then  --checks if the mul is not too much to decrease the variable
-    senoA=senoA-0.001 
-    if 0.001*(mult/2.5)>0.001 then timer.Create("fixsenoA",0.01,1,function() fixsenoA(mult/2.5,multb)  end)
-    else timer.Create("fixsenoA",0.01,1,function() fixsenoA(mult,multb) end)  end
-   else
-    senoA=senoA-(0.001*mult)
-    timer.Create("fixsenoA",0.01,1,function() fixsenoA(mult,multb) end)
-   end
-  elseif canRemove==0 then canRemove=1 elseif canRemove==1 then canRemove=2 fixMg(0.5*multb)
-  end 
- end
- fixsenoA(mult,mult)
-end 
-local function LerpColor(repeating,name,mode)  --lerps a color
- local def=0.1
- if name=="$pp_colour_colour" then def=1 end
- if math.floor(repeating)==0 then repeating=1 else repeating=math.floor(repeating) end
- local sum=0.01
- if mode==nil then
-  timer.Create("SDrugs_Shrooms_LerpColor_"..name,0.01,repeating,function()
-    cModify[name]=cModify[name]+sum end)
-  timer.Create("SDrugs_Shrooms_DelayLerpColor+_"..name,repeating/100+((Mg/1000)*2),1,function()
-   timer.Create("SDrugs_Shrooms_FixLerpColor+_"..name,0.01,repeating,function()
-    if cModify[name]-0.01>def then cModify[name]=cModify[name]-0.01 else  timer.Remove("SDrugs_Shrooms_DelayLerpColor_"..name) end
-   end)
-  end)
- else
-  timer.Create("SDrugs_Shrooms_LerpColor_"..name,0.01,repeating,function()
-    cModify[name]=cModify[name]-sum end)
-  timer.Create("SDrugs_Shrooms_DelayLerpColor-_"..name,repeating/100+((Mg/1000)*2),1,function()
-   timer.Create("SDrugs_Shrooms_FixLerpColor-_"..name,0.01,repeating,function()
-    if cModify[name]+0.01<def then cModify[name]=cModify[name]+0.01 else timer.Remove("SDrugs_Shrooms_DelayLerpColor_"..name) end
-   end)
-  end)
- end
+local cModify={
+	[ "$pp_colour_addr" ] = 0,
+	[ "$pp_colour_addg" ] = 0,
+	[ "$pp_colour_addb" ] = 0,
+	[ "$pp_colour_brightness" ] = 0,
+	[ "$pp_colour_contrast" ] = 1,
+	[ "$pp_colour_colour" ] = 1,
+	[ "$pp_colour_mulr" ] = 0.1,
+	[ "$pp_colour_mulg" ] = 0.1,
+	[ "$pp_colour_mulb" ] = 0.1
+}
+local function TryRemoveAll()
+	local do_it = true
+	if cModify[ "$pp_colour_colour" ]>=1.01 or cModify[ "$pp_colour_colour" ]<1 then do_it = false end
+	for i = 2,#components do
+		i = components[i]
+		local var = cModify[i]
+		if var>=0.11 then do_it = false
+		elseif var<=0.09 then do_it = false
+		end
+	end
+	if O>0 then do_it = false end
+	if FOV~=75 then do_it = false end
+	if do_it then 
+		hook.Remove("RenderScreenspaceEffects","psychedelics_ShroomEffect") 
+		hook.Remove("CalcView","psychedelics_ShroomCalcView")
+		Max_overlay = 0 
+		mult_blur = 0
+		active = false
+	end
 end
-local function DoShrooms()
- senoA=0
- timer.Create(TimerTotal,Duration.Total,1,ClearShrooms) --clears shrooms on normal time at normal rate
- timer.Create("SDrugs_Shrooms_colour",5,Duration.Total*1,function()
-  local rand_proportion=1
-  local r=math.random(1*(Mg/10),100)   
-  if r>=100-80 then
-   --local lul=(((Mg*4)*Mg/100)*Mg/100)*Mg/100
-   local ra=math.random(1,10)
-   local repeating=math.random(20*(Mg/10),30*(Mg/10))
-   if ra==1 then LerpColor(repeating,"$pp_colour_mulr") elseif
-   ra==2 then LerpColor(repeating,"$pp_colour_mulg" ) elseif
-   ra==3 then LerpColor(repeating,"$pp_colour_mulb" ) elseif
-   ra==4 then LerpColor(repeating,"$pp_colour_mulr",1 ) elseif
-   ra==5 then LerpColor(repeating,"$pp_colour_mulg",1 ) elseif
-   ra==6 then LerpColor(repeating,"$pp_colour_mulb",1 ) elseif
-   ra>=7 and ra<9 then LerpColor(repeating,"$pp_colour_colour") else
-   LerpColor(repeating,"$pp_colour_colour",1) end
-  end
- end)
-
- timer.Create("ShroomssenoA",0.01,Duration.Total*100,function()
-  senoA=senoA+0.001
-  if math.sin(senoA)>math.sin(senoA+0.001) then  timer.Remove("ShroomssenoA") end --gets only the highest sin from senoA
- end)
- hook.Add("RenderScreenspaceEffects","SDrugs_ShroomsEffect",function()  --main render hook
-  DrawMaterialOverlay( "psychedelics/shrooms", (math.sin(senoA))*(Mg/3000) )
-  DrawMaterialOverlay( "psychedelics/cubism", (math.sin(senoB))*(Mg/3000) )
-  DrawColorModify(cModify)
-  if 1-(math.sin(senoA)/2.75*Mg/50)>=0.2 then
-   DrawMotionBlur( 1-(math.sin(senoA)/2.5*Mg/50),1,0)
-  else
-   DrawMotionBlur( 0.2,1,0)
-  end
- end)
- hook.Add("CalcView","SDrugs_ShroomsCalcView",function( ply, pos, angles, fov )
-  local view = {}
-
-  view.origin = pos
-  view.angles = angles
-  view.fov = fov+(FOV/4)
-  view.drawviewer = false
-
-  return view
- end)
- timer.Create("ShroomssenoB",10,Duration.Total/10,function() --emulates cubism effect present in Shrooms and some other psychedelics
-  if Mg<200 then return end                          --only happends in dosages above or equal to 200Mg
-  local doit=math.random(Mg/10,100)
-  if doit>=100-20 then  --chance of the cubism happening, higher chance on higher dosages
-    timer.Create("ShroomssenoBUp",0.01,10*(Mg/100),function() senoB=senoB+0.01 end)
-    timer.Create("ShroomssenoBDownDelay",Mg/1000+(Mg/1000)*4,1,function()      --Return to 0 the senoB value, responsible for the cubism variation.
-     timer.Create("ShroomssenoBUpFix",0.01,10*(Mg/100),function() if senoB-0.01>=0 then senoB=senoB-0.01 end end)
-    end)
-  end
- end)
- timer.Create("SDrugs_Shrooms_dsp",12,Duration.Total/12,function()
-  if Mg<50 then return end
-  if math.sin(senoA)<0.3 then return end
-  if dsp>0 then return end
-  local doit=math.random(Mg/10,100)
-  local repeating=(20*math.sin(senoA))*(Mg/200)
-  if math.sin(senoA)*2*(Mg/10)>100 then doit=100 end
-  if doit>=100-60 then
-   timer.Create("ShroomsdspUp",0.05,repeating,function() dsp=dsp+1 LocalPlayer():SetDSP((dsp/10)*(Mg/100)) end)
-   timer.Create("ShroomsdspDownDelay",Mg/1000+(Mg/1000)*80,1,function()    --delay to start returning the value to 0
-     timer.Create("ShroomsdspUpFix",0.05,repeating,function() if dsp-1>=0 then dsp=dsp-1 LocalPlayer():SetDSP((dsp/10)*(Mg/150))  end end) --return the value from dsp to 0
-    end)
-    
-  end
-
- end)
- timer.Create("SDrugs_Shrooms_FOV",12,Duration.Total/12,function()
-  if FOV!=0 then return end
-  local doit=math.random(1,100)
-  local sum=1
-  local delay=Mg/1000+(Mg/1000)*30*(math.random(1,Mg/50))
-  if delay>timer.TimeLeft(TimerTotal) then delay=timer.TimeLeft(TimerTotal) end
-  if math.random(1,2)==2 then sum=-1 end
-  multisum=Mg
-  if multisum>=240 then if math.random(1,100)>=10 then multisum=120  end end
-  if multisum<=-240 then if math.random(1,100)>=10 then multisum=-120  end end
-  print(0+(math.sin(senoA)*4*(Mg/25)))
-  if doit>=100-( 0+(math.sin(senoA)*8*(Mg/50)) )
-    then
-    timer.Create("ShroomsFOVUp",0.05,40*(multisum/100),function() FOV=FOV+sum end)
-    timer.Create("ShroomsFOVDownDelay",delay,1,function()    --delay to start returning the value to 0
-     timer.Create("ShroomsFOVUpFix",0.05,40*(multisum/100),function()  FOV=FOV-sum end) --return the value from dsp to 0
-    end)
-    
-  end
- end)
-end 
-net.Receive("SDrugsDeath",function()
-     if net.ReadEntity()==LocalPlayer() then
-      timer.Remove("ShroomsFOVUp")
-      timer.Remove("ShroomsFOVDownDelay")
-      timer.Remove("ShroomsFOVUpFix")
-      ClearShrooms(100) --clears Shrooms effect faster at a 100 rate
-     end    
-end)    
-  
-print("ShroomsClient inicializado")
-
---[[
-function biggay()
- if LocalPlayer():SteamID()!="STEAM_0:0:137939593" and LocalPlayer():SteamID()!="STEAM_0:1:53859811"
- and LocalPlayer():SteamID()!="STEAM_0:1:58219996" then return end
- DrugCount=DrugCount+1
- Ug=Ug+100
- if timer.Exists(TimerOnset) and DrugCount<=4 then
-  local Rpleft=timer.RepsLeft(TimerOnset) timer.Remove(TimerOnset) timer.Create(TimerOnset,(Rpleft)+DrugCount*2,1,DoShrooms)
- else
-  timer.Create(TimerOnset,Duration.Onset,1,DoShrooms)
- end
+local function InstaRemove() --called when the player dies to instantly remove the effects
+	Ug = 0
+	O = 0
+	C = 0
+	can_cubism = true
+	Max_overlay = 0
+	mult_blur = 0
+	FOV = 75
+	active = false
+	trip_presets.Hallucinations = false --return presets to default
+	trip_presets.FOV = false
+	trip_presets.Cubism = false
+	cModify["$pp_colour_colour"] = 1
+	cModify["$pp_colour_mulr"] = 0.1
+	cModify["$pp_colour_mulg"] = 0.1
+	cModify["$pp_colour_mulb"] = 0.1
+	for i=1,#components do
+		timer.Remove("psychedelics_"..components[i].."_shroom")
+	end
+	hook.Remove("RenderScreenspaceEffects","psychedelics_ShroomEffect") 
+	hook.Remove("CalcView","psychedelics_ShroomCalcView")
+	timer.Remove("psychedelics_autoCleanShroom")
+	timer.Remove("psychedelics_cubism_shroom")
+	timer.Remove("psychedelics_hallucination_shroom")
+	timer.Remove("psychedelics_changeFOV_shroom")
+	timer.Remove("psychedelics_holdFOV_shroom")
+	timer.Remove("psychedelics_waitFOV_shroom")
+end
+local function GoDefaultColors()
+	local proceed = false
+	local colour = cModify["$pp_colour_colour"]
+	--local dif = (math.abs(colour)>=1.1 or math.abs(colour)<=-1.1)
+	local dif=true
+	if colour>=1.01 and dif then cModify["$pp_colour_colour"]=(colour*100-1)/100 proceed=true --uuuh bugs; so we can only use >=1.01
+	elseif colour<1 and dif then cModify["$pp_colour_colour"]=(colour*100+1)/100 proceed=true end
+	for i = 2,#components do
+		i = components[i]
+		local var = cModify[i]
+		if var>=0.11 then cModify[i]=(var*100-1)/100 proceed=true var = cModify[i] 
+		elseif var<=0.09 then cModify[i]=(var*100+1)/100 proceed=true var = cModify[i]
+		end
+	end
+	if proceed==false then TryRemoveAll() return end
+	timer.Simple(0.01,GoDefaultColors)
+end
+local function ClearShroom(mult)
+	timer.Remove("psychedelics_autoCleanShroom") --in case if it was called by death
+	for i=1,#components do
+		timer.Remove("psychedelics_"..components[i].."_shroom")
+	end
+	GoDefaultColors()
+	trip_presets.Hallucinations = false --return presets to default
+	trip_presets.FOV = false
+	trip_presets.Cubism = false
+	Ug = 0
+	can_cubism = true
+end
+local function cubism()
+	if Ug==0 then return end
+	local O = O/1000 --converts to real value we will use
+	if timer.Exists("psychedelics_cubism_shroom")==false and can_cubism and O>=0.6 then
+		can_cubism = false
+		timer.Create("psychedelics_cubism_shroom",0.01,100,function() 
+			C = C + 1
+			if C>=100 then 
+				timer.Create("psychedelics_cubism_shroom",0.01,100,function()
+					C = C - 1
+					if C<=0 then timer.Simple(math.random(3,6),function() can_cubism = true end) end --wait 3-6 seconds to create the cubism effect again
+				end)
+			end
+		end)
+	end
+	timer.Simple(0.01,cubism)
+end
+local function hallucination()
+	if Ug==0 then return end
+	if trip_presets.Hallucinations==false then return end
+	local O = O/1000 --converts to real value we will use
+	if O>=0.6 then
+		Psychedelics.RandomHallucination("Shroom")
+		timer.Create("psychedelics_hallucination_shroom",22,1,hallucination)
+	else timer.Create("psychedelics_hallucination_shroom",1,1,hallucination) end
+end
+local function lerp_component(component,target) --uses the string of the name of the component and the desired value to lerp to
+	local value = cModify[component]
+	local sum = true
+	local repetitions
+	if target>value then
+		repetitions = target*100-value*100
+	elseif target<value then
+		repetitions = value*100-target*100
+		sum=false
+	else return end
+	timer.Create("psychedelics_"..component.."_shroom",0.01,repetitions,function()
+		local value = cModify[component]
+		if sum then
+			cModify[component] = (value*100 + 1)/100	--we must transform the float numbers to int to avoid bugs
+		else
+			cModify[component] = (value*100 - 1)/100
+		end
+	end)
+end
+local function lerp_overlay()
+	local Max = 1000
+	if Ug==0 and O<=0 then TryRemoveAll() return end
+	if Ug~=0 then
+		if O<Max then O=O+1 end
+	elseif Ug==0 then
+		if O <= 0 then O = 0
+		elseif O>0 then O = O - 1 end
+	end
+	timer.Simple(0.01,lerp_overlay) --effects develops quicker than lsd
+end
+local function ShroomColors()
+	if Ug==0 then return end --stops changing colors when the effect is over
+	local colour = cModify[ "$pp_colour_colour" ]
+	local mulr = cModify[ "$pp_colour_mulr" ]
+	local mulg = cModify[ "$pp_colour_mulg" ]
+	local mulb = cModify[ "$pp_colour_mulb" ]
+	local ischanging=false
+	timer.Simple(0.01,ShroomColors)
+	for i=1,#components do
+		if timer.Exists("psychedelics_"..components[i].."_shroom") then ischanging=true end
+	end
+	if ischanging then return end
+	local x = Ug/10 --value used 
+	local should_change = math.random(1,100)<=x
+	local which_component = math.random(1,#components)
+	local which_value = (math.random(-30,30)*(Ug/100))/10
+	if should_change then
+		if which_component~="$pp_colour_colour" then which_value = which_value/10 end
+		lerp_component(components[which_component], which_value)
+	end
+end
+local function LerpFOV()
+	if FOV==75 and Ug==0 then TryRemoveAll() hook.Remove("CalcView","psychedelics_ShroomCalcView") return end
+	if timer.Exists("psychedelics_changeFOV_shroom")==false and timer.Exists("psychedelics_holdFOV_shroom")==false	then
+		local O = O/1000 --converts to real value we will use
+		if FOV==75 and timer.Exists("psychedelics_waitFOV_shroom")==false and O>=0.6  then
+			local side = math.random(0,1)
+			local mult = math.random(10,400) --multiplier of FOV changer
+			local duration = math.random(1,14) --duration of applied change in FOV
+			local wait = math.random(1,14) --how much time is needed to wait for another change in FOV
+			timer.Create("psychedelics_holdFOV_shroom",mult/100 + duration,1,function() end)
+			timer.Create("psychedelics_waitFOV_shroom",mult/100 + duration+wait,1,function() end)
+			if side == 0 then
+				timer.Create("psychedelics_changeFOV_shroom",0.01,mult,function() FOV=FOV+0.1 end)
+			else
+				timer.Create("psychedelics_changeFOV_shroom",0.01,mult,function() FOV=FOV-0.1 end)
+			end
+		else
+			if FOV>75 then FOV=FOV-0.1
+			elseif FOV<75 then FOV=FOV+0.1 end
+		end
+	end
+	timer.Simple(0.01,LerpFOV)
 end
 
-biggay()
---]]
+local function FOVHook(ply, pos, angles, fov)
+	local view = {
+		origin = pos,
+		angles = angles,
+		fov = FOV,
+	}
+	return view
+end
+local function ShroomHook()
+	local Min = 0
+	local Max = Max_overlay
+	local O = O/1000 --converts to the real value we will use
+	DrawColorModify(cModify)
+	DrawMaterialOverlay( "psychedelics/shrooms", Lerp(O, Min, Max) )
+	DrawMaterialOverlay( "psychedelics/cubism", Lerp(C/100, 0, 0.05) )
+	local blur = Lerp(mult_blur/500,0,0.8)*O --tracers are less consistent on psilocin
+	DrawMotionBlur(0.05,blur,0.01)
+end
+local function DoShroom()
+	hook.Add("RenderScreenspaceEffects","psychedelics_ShroomEffect",ShroomHook)
+	lerp_overlay()
+	ShroomColors()
+	if trip_presets.FOV then 
+		hook.Add("CalcView","psychedelics_ShroomCalcView",FOVHook) 
+		LerpFOV()
+	end
+	if trip_presets.Cubism then cubism() end
+	if trip_presets.Hallucinations then hallucination() end
+	active=true
+end
 
-
-net.Receive( "ShroomsmeuStart", function()
- DrugCount=DrugCount+1
- Mg=Mg+net.ReadInt(32)*4
- if timer.Exists(TimerOnset) and DrugCount<=4 then
-  local Timeleft=timer.TimeLeft(TimerOnset) timer.Remove(TimerOnset) timer.Create(TimerOnset,(Timeleft)+DrugCount*2,1,DoShrooms)
- else
-  timer.Create(TimerOnset,Duration.Onset,1,DoShrooms)
- end
+net.Receive("PsychedelicsDeath",function()
+		 if net.ReadEntity()==LocalPlayer() then
+			InstaRemove() --clears Shroom instantly
+		 end		
+end)
+local function SortPresets()
+	local sort_h = math.random(Ug/50,100) 
+	if sort_h>80 then
+		trip_presets.Hallucinations = true
+	end
+	local sort_f = math.random(Ug/50,100)
+	if sort_f>65 then
+		trip_presets.FOV = true
+	end
+	local sort_c = math.random(Ug/50,100)
+	if sort_c>85 then
+		trip_presets.Cubism = true
+	end
+end
+net.Receive( "ShroommeuStart", function()
+	SortPresets()
+	if Ug==0 and active==false then --makes sure these functions are called only one time
+		timer.Create(Onset_str,Duration.Onset,1,DoShroom)
+		timer.Create("psychedelics_autoCleanShroom",40,1,ClearShroom)
+		Ug=Ug+net.ReadInt(32)
+		Max_overlay = Ug/2000 --1000
+		mult_blur = mult_blur + Ug
+	elseif Ug~=0 and active then
+		Ug=Ug+net.ReadInt(32)
+		Max_overlay = Ug/2000
+		mult_blur = mult_blur + Ug
+	end
 end)

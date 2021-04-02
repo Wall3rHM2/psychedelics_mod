@@ -14,8 +14,7 @@
 
 	"$scale" "[2 2]"
 
-	"$bumpmap" "dev/water_dudv"
-	"$normalmap" "water/tfwater_normal"
+	"$normalmap" "water/scrolling_water01_normal"
 	"$bumpframe" "0"
 
 
@@ -30,7 +29,7 @@
 		"TextureScroll"
 		{
 			"texturescrollvar" "$bumptransform"
-			"texturescrollrate" .1
+			"texturescrollrate" .05
 			"texturescrollangle" 45.00
 		}
 	}

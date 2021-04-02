@@ -1,5 +1,5 @@
 ENT.Type = "anim"
-ENT.PrintName = "Substrate"
+ENT.PrintName = "Mushroom Substrate"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.Category = "Psychedelics Mod"

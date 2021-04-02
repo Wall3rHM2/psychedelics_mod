@@ -14,24 +14,9 @@
 
 	"$scale" "[2 2]"
 
-	"$bumpmap" "dev/water_dudv"
-	"$normalmap" "water/tfwater_normal"
+	"$normalmap" "water/scrolling_water01_normal"
 	"$bumpframe" "0"
 
 
-	"Proxies"
-	{
-		"AnimatedTexture"
-		{
-			"animatedtexturevar" "$normalmap"
-			"animatedtextureframenumvar" "$bumpframe"
-			"animatedtextureframerate" 30.00
-		}
-		"TextureScroll"
-		{
-			"texturescrollvar" "$bumptransform"
-			"texturescrollrate" .1
-			"texturescrollangle" 45.00
-		}
-	}
+
 }

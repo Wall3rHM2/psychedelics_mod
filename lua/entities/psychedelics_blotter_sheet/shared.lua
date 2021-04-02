@@ -1,5 +1,5 @@
 ENT.Type = "anim"
-ENT.PrintName = "Blotter Sheet"
+ENT.PrintName = "Paper Sheet"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.Category = "Psychedelics Mod"
