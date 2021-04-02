@@ -1,16 +1,11 @@
---mudar a funcao hallucination para apenas ser usado quando o O >= 0.6 e caso seja menor que isso, tentar novamente em 1 segundo
---mudar a funcao cubism para ser usado apenas quando O>= 0.6
---mudar a funcao FOV para ser usado apenas quando O>= 0.6
-local Duration = {Onset=0.01,Total=160} --effect time = hours of the effect irl*30
+local Duration = {Onset=15,Total=180} --effect time = hours of the effect irl*30
 											-- eg.:3*30=90		 --->3 hours		 >30 constant value
-local trip_presets = {Hallucinations=false, FOV=false, Cubism=false} 
+local trip_presets = {Hallucinations=false, FOV=false} 
 --presets used to set which components the random trip will have
 local Onset_str = "psychedelics_shroom_onset"
 local Total_str = "psychedelics_shroom_total"
 local Ug = 0
 local O = 0 -- Variable used to lerp the DrawMaterialOverlay
-local C = 0 -- Variable used to lerp the cubism
-local can_cubism = true
 local Max_overlay = 0
 local mult_blur = 0 --used to multiply the motion blur
 local FOV = 75 --75 is the default value
@@ -56,14 +51,12 @@ local function InstaRemove() --called when the player dies to instantly remove t
 	Ug = 0
 	O = 0
 	C = 0
-	can_cubism = true
 	Max_overlay = 0
 	mult_blur = 0
 	FOV = 75
 	active = false
 	trip_presets.Hallucinations = false --return presets to default
 	trip_presets.FOV = false
-	trip_presets.Cubism = false
 	cModify["$pp_colour_colour"] = 1
 	cModify["$pp_colour_mulr"] = 0.1
 	cModify["$pp_colour_mulg"] = 0.1
@@ -74,11 +67,11 @@ local function InstaRemove() --called when the player dies to instantly remove t
 	hook.Remove("RenderScreenspaceEffects","psychedelics_ShroomEffect") 
 	hook.Remove("CalcView","psychedelics_ShroomCalcView")
 	timer.Remove("psychedelics_autoCleanShroom")
-	timer.Remove("psychedelics_cubism_shroom")
 	timer.Remove("psychedelics_hallucination_shroom")
 	timer.Remove("psychedelics_changeFOV_shroom")
 	timer.Remove("psychedelics_holdFOV_shroom")
 	timer.Remove("psychedelics_waitFOV_shroom")
+	timer.Remove(Onset_str)
 end
 local function GoDefaultColors()
 	local proceed = false
@@ -105,27 +98,9 @@ local function ClearShroom(mult)
 	GoDefaultColors()
 	trip_presets.Hallucinations = false --return presets to default
 	trip_presets.FOV = false
-	trip_presets.Cubism = false
 	Ug = 0
-	can_cubism = true
 end
-local function cubism()
-	if Ug==0 then return end
-	local O = O/1000 --converts to real value we will use
-	if timer.Exists("psychedelics_cubism_shroom")==false and can_cubism and O>=0.6 then
-		can_cubism = false
-		timer.Create("psychedelics_cubism_shroom",0.01,100,function() 
-			C = C + 1
-			if C>=100 then 
-				timer.Create("psychedelics_cubism_shroom",0.01,100,function()
-					C = C - 1
-					if C<=0 then timer.Simple(math.random(3,6),function() can_cubism = true end) end --wait 3-6 seconds to create the cubism effect again
-				end)
-			end
-		end)
-	end
-	timer.Simple(0.01,cubism)
-end
+
 local function hallucination()
 	if Ug==0 then return end
 	if trip_presets.Hallucinations==false then return end
@@ -181,7 +156,11 @@ local function ShroomColors()
 	local should_change = math.random(1,100)<=x
 	local which_component = math.random(1,#components)
 	local which_value = (math.random(-30,30)*(Ug/100))/10
-	if should_change then
+	local over_value = false--gets if the component have a higher or lower value than acceptable
+	local current_value = cModify[components[which_component]]
+	if current_value>=10 and which_value>0 then over_value = true
+	elseif current_value<=-10 and which_value<0 then over_value = true end
+	if should_change and over_value == false then
 		if which_component~="$pp_colour_colour" then which_value = which_value/10 end
 		lerp_component(components[which_component], which_value)
 	end
@@ -224,7 +203,6 @@ local function ShroomHook()
 	local O = O/1000 --converts to the real value we will use
 	DrawColorModify(cModify)
 	DrawMaterialOverlay( "psychedelics/shrooms", Lerp(O, Min, Max) )
-	DrawMaterialOverlay( "psychedelics/cubism", Lerp(C/100, 0, 0.05) )
 	local blur = Lerp(mult_blur/500,0,0.8)*O --tracers are less consistent on psilocin
 	DrawMotionBlur(0.05,blur,0.01)
 end
@@ -236,12 +214,11 @@ local function DoShroom()
 		hook.Add("CalcView","psychedelics_ShroomCalcView",FOVHook) 
 		LerpFOV()
 	end
-	if trip_presets.Cubism then cubism() end
 	if trip_presets.Hallucinations then hallucination() end
 	active=true
 end
 
-net.Receive("PsychedelicsDeath",function()
+net.Receive("PsychedelicsDeathS",function()
 		 if net.ReadEntity()==LocalPlayer() then
 			InstaRemove() --clears Shroom instantly
 		 end		
@@ -255,22 +232,32 @@ local function SortPresets()
 	if sort_f>65 then
 		trip_presets.FOV = true
 	end
-	local sort_c = math.random(Ug/50,100)
-	if sort_c>85 then
-		trip_presets.Cubism = true
-	end
+
 end
 net.Receive( "ShroommeuStart", function()
 	SortPresets()
 	if Ug==0 and active==false then --makes sure these functions are called only one time
 		timer.Create(Onset_str,Duration.Onset,1,DoShroom)
-		timer.Create("psychedelics_autoCleanShroom",40,1,ClearShroom)
+		timer.Create("psychedelics_autoCleanShroom",Duration.Total,1,ClearShroom)
 		Ug=Ug+net.ReadInt(32)
 		Max_overlay = Ug/2000 --1000
 		mult_blur = mult_blur + Ug
 	elseif Ug~=0 and active then
-		Ug=Ug+net.ReadInt(32)
-		Max_overlay = Ug/2000
-		mult_blur = mult_blur + Ug
+		if active then
+			Ug=Ug+net.ReadInt(32)
+			ShroomColors() 
+			Max_overlay = Ug/2000
+			mult_blur = mult_blur + Ug
+		else
+			local delay = timer.TimeLeft(Onset_str)
+			local sum = net.ReadInt(32)
+			timer.Simple(delay, function()
+				if Ug==0 then return end --avoids executing the function if the player died
+				Ug=Ug+sum
+				ShroomColors()
+				Max_overlay = Ug/2000
+				mult_blur = mult_blur + Ug
+			end)
+		end
 	end
 end)

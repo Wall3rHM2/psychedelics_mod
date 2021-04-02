@@ -64,7 +64,7 @@ local posx2={"0.5","0.6","0.7","0.8","0.9"}
 local posy={"0.0","0.1","0.2","0.3","0.4"}
 local posy2={"0.5","0.6","0.7","0.8","0.9"}
 local function update_skin(ent)
-	local data=ent:GetNWString("psychedelics_data","psychedelics_blotter_--1")
+	local data=ent:GetNWString("psychedelics_data","psychedelics_blotter_--1-1-1")
 	local dataTab=string.Split(    data,"-"    )
 	local subMaterial=dataTab[2]
 	if subMaterial == "" then return end

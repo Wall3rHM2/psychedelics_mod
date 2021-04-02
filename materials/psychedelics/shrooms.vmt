@@ -8,10 +8,8 @@
 
 	"$refractamount" ".02"
 	"$refracttint" "{255 255 255}"
-	"$refractblur" "1"
+	"$refractblur" "0"
 
-
-	"$scale" "[2 2]"
 
 	"$normalmap" "psychedelics/textures/mushroom"
 	"$bumpframe" "0"
@@ -28,8 +26,8 @@
 		"TextureScroll"
 		{
 			"texturescrollvar" "$bumptransform"
-			"texturescrollrate" .025
-			"texturescrollangle" 90.00
+			"texturescrollrate" .005
+			"texturescrollangle" 45.00
 		}
 	}
 }

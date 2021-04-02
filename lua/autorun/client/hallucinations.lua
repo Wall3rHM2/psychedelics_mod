@@ -1,7 +1,7 @@
 hook.Add("InitPostEntity", "psychedelics_startup",function() --begin of main hook
 local Sounds={ --sounds for auditory hallucinations
 	"vo/ravenholm/shotgun_overhere.wav",
-	"vo/ravenholm/bucket_thereyouarwe.wav",
+	"vo/ravenholm/madlaugh03.wav",
 	"ambient/alarms/train_horn2.wav",
 	"ambient/creatures/teddy.wav",
 	"ambient/levels/citadel/strange_talk3.wav",
@@ -149,7 +149,7 @@ local Hallucinations={
 		DogSign:SetPos(DogSign:LocalToWorld(Vector(thex,they,0)) )
 		DogSign:SetAngles(DogSign:LocalToWorldAngles(Angle(0,180,0)) )
 		timer.Simple(2,function()
-			DogSign:EmitSound("ambient/dog"..tostring(math.random(1,6))..".wav")
+			DogSign:EmitSound("ambient/animal/dog"..tostring(math.random(1,6))..".wav")
 		end)
 	end,
 	function(drug_name) --hallucination n 6
@@ -190,9 +190,7 @@ local Hallucinations={
 		computer:SetPos(computer:LocalToWorld(Vector(thex,they,39)))
 		computer:SetPos(computer:LocalToWorld(Vector(10,0,0)))
 		computer:SetAngles(computer:LocalToWorldAngles(Angle(0,180,0)))
-		local morefun=math.random(1,5)
-		if morefun>2 then morefun=2 end --better probability of returning the skin 2
-		computer:SetSkin(morefun)
+		computer:SetSkin(1)
 	end,
 	function(drug_name) --hallucination n 9
 		local thex=math.random(-70,470)

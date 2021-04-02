@@ -4,7 +4,7 @@ include("shared.lua")
 if CLIENT then return end
 util.AddNetworkString( "LSDmeuStart" )
 local type="lsd" --maybe i will add NBOMe in the future and/or DOB, DOC
-local default_quantity=25 --default quantity of LSD, mainly used for debuging
+local default_quantity=0 --default quantity of LSD, mainly used for debuging
 local material="" --default material --psychedelics/blotters/sroad
 local defaultdata="psychedelics_blotter_-"..material
 local tmaterial=string.Split(material,"/")
@@ -29,7 +29,7 @@ function ENT:Initialize()
 	local data = self:GetDataP()
 	local type = self:GetTypeP()
 	local quantity = self:GetQuantity()
-	self:SetNWString("psychedelics_data","psychedelics_blotter_-psychedelics/blotters/triangles") --debug
+	--self:SetNWString("psychedelics_data","psychedelics_blotter_-psychedelics/blotters/triangles") --debug
 	if quantity == 0 then  quantity=self:GetNWInt( "psychedelics_quantity", default_quantity ) end
 	if type=="" then type=self:GetNWString("psychedelics_type","lsd") end
 	if data=="" then data=self:GetNWString("psychedelics_data",defaultdata) end

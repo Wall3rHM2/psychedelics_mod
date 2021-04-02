@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	local data = self:GetDataP()
 	local quantity = self:GetQuantity()
-	if data=="" then data = self:GetNWString("psychedelics_data","psychedelics_blotter_-1-1-1") end
+	if data=="" then data = self:GetNWString("psychedelics_data","psychedelics_blotter_--1-1-1") end
 	if quantity==0 then quantity = self:GetNWInt("psychedelics_quantity",default_quantity) end
 	self:SetNWString("psychedelics_data", data)
 	self:SetNWString("psychedelics_quantity", quantity)
