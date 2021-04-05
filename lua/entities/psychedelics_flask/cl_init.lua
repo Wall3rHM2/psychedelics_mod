@@ -55,6 +55,9 @@ function ENT:DrawTranslucent(flags)
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Add lysergic acid")
 	if (tiptext!=""&&enabled!=0&&entity==self) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+		end
 	end
 end

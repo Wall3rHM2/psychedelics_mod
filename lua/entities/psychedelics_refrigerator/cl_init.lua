@@ -52,7 +52,8 @@ function ENT:DrawTranslucent()
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Open the door and add a flask")
-	if (tiptext!=""&&enabled!=0&&entity==self) then
+	local valid = (entity==self or entity:GetNWEntity("psychedelics_door_base",nil) == self)
+	if (tiptext!=""&&enabled!=0&&valid) then
 		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
 		if distance<=200 then
 			Draw3D2DTip(tiptext,self)

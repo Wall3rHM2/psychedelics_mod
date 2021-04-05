@@ -6,13 +6,15 @@ local function free_space(base) --removes the flasks from inside the refrigerato
 	base:SetNWInt("psychedelics_refrigerator_count",5)
 	local flasks=ents.FindByClassAndParent("psychedelics_flask",base)
 	for k,v in pairs(flasks) do
+		local pos = v:GetPos()
 		v:SetParent(nil)
 		v:SetSkin(2)
-		v:GetPhysicsObject():EnableMotion(false)
+		v:SetPos(pos) --for some reason, when i unparent this entity, it goes to refrigerator 0 local position
+		v:GetPhysicsObject():EnableMotion(true)
 		v:SetNWInt("psychedelics_flask_level",9)
 		v:SetNWString("psychedelics_tip_text","Add to a blotter paper sheet")
-		v:SetCollisionGroup(COLLISION_GROUP_NONE)
-		v:GetPhysicsObject():SetCollisionGroup(true)
+		--v:SetCollisionGroup(COLLISION_GROUP_NONE)
+		--v:GetPhysicsObject():SetCollisionGroup(true)
 	end
 end
 local function AnimateDoor(base)
@@ -63,7 +65,7 @@ local function adjust_progress(base) --function used to adjust the progress of f
 	local progress=base:GetNWInt("psychedelics_progress",0)
 	local door_ang=base:GetNWInt("psychedelics_door_angle",-10)
 	local free_count=base:GetNWInt("psychedelics_refrigerator_count",5) --gets the count of available free spaces
-	timer.Simple(0.05,function() adjust_progress(base) end) --debug, return to 2.1 value
+	timer.Simple(2.1,function() adjust_progress(base) end) --debug, return to 2.1 value
 	if isopen or door_ang!=0 or free_count>=5 then return end --only adjust progress when the door is closed
 
 	if (temp==0&&progress<100) then 
@@ -150,14 +152,13 @@ function ENT:Touch(entity)
 		Vector(0,0,-5),Vector(0,0,8.25),Vector(0,0,21.5)}
 		local free_table=self:GetNWString("psychedelics_refrigerator_space","0-0-0-0-0") -- since there is no NWTable, we can improvise with strings
 		free_table=string.Split(free_table,"-")						--this is used to know which spaces are occupied or not
-		--entity:GetPhysicsObject():EnableMotion(false)
+		entity:GetPhysicsObject():EnableMotion(false)
 		entity:SetAngles(self:LocalToWorldAngles(Angle(0,0,0)))
 		local free_string=""
 		local repeat_table=true
 		for i=1,5 do
 			if (free_table[i]=="0"&&repeat_table) then
 				entity:SetPos(self:LocalToWorld(offset_pos[i]))
-				print(self:LocalToWorld(offset_pos[i]))
 				free_table[i]="1"
 				repeat_table=false
 			else
@@ -167,14 +168,13 @@ function ENT:Touch(entity)
 			end
 		end
 		entity:SetParent(self)
-		--constraint.Weld(entity,self,0,0,0,6,false)
 		self:SetNWString("psychedelics_refrigerator_space",free_string)
 		self:SetNWInt("psychedelics_refrigerator_count",free_count-1)
 		self:SetNWString("psychedelics_tip_text","Close the door and reach 0°")
 		self:SetNWInt("psychedelics_level",1)
 		entity:SetNWInt("psychedelics_flask_level",8)
 		entity:SetNWString("psychedelics_tip_text","")
-		--constraint.NoCollide( self, entity, 0, 0 )
+		constraint.NoCollide( self, entity, 0, 0 )
 
 	end
 

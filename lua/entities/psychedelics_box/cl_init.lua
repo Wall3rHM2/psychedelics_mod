@@ -73,6 +73,7 @@ function ENT:Draw()
 end
 function ENT:DrawTranslucent(flags)
 	self:Draw(flags)
+	water_bar_draw(self)
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Add mushroom substrate (0/3)")
@@ -80,7 +81,6 @@ function ENT:DrawTranslucent(flags)
 		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
 		if distance<=200 then
 			Draw3D2DTip(tiptext,self)
-			water_bar_draw(self)
 		end
 	end
 end

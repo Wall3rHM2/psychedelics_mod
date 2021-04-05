@@ -31,7 +31,7 @@ You can find a list of the commands available in your server by typing "find psy
 
 
 =======================================Credits=================================================================================
-Models in content pack: Wall3r
+Custom models in content pack: Wall3r
 Lua scripting: Wall3r
 Most of base textures: CC0Textures.com
 And of course, you, that made this possible.

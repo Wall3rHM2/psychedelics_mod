@@ -4,6 +4,7 @@ if SERVER then
 	util.AddNetworkString( "LSDmeuStart" )
 	util.AddNetworkString( "ShroommeuStart" )
 	util.AddNetworkString( "psychedelics_postentity" )
+	resource.AddWorkshop( "2446913601" )
 	--Net messages
 	net.Receive("psychedelics_postentity",function(len,ply) 
 		ply:SetNWBool("psychedelics_postinit",true)
