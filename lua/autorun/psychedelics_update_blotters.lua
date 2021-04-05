@@ -18,6 +18,7 @@ if CLIENT then
 		local pos2=net.ReadString()
 		local name=net.ReadString()
 		local ent=net.ReadEntity()
+		if ent:IsValid() == false then return end
 		local matTable = {    
 		["$basetexture"] = basematerial,
 		["$basetexturetransform"] = "center 0 0 scale " .. (1) .. " " .. (1) .. " rotate 0 translate 0 0",
@@ -25,6 +26,7 @@ if CLIENT then
 		["$vertexcolor"] = 1
 		};  
 		CreateMaterial(name,"VertexLitGeneric", matTable)
+		if ent:IsValid() == false then return end
 		ent:SetSubMaterial(0,"!"..name)
 	end)
 	--[[ --below is the old system of updating blotters, dont work very well on dedicated servers

@@ -43,7 +43,6 @@ local function Draw3D2DTip(text,ent)
 		surface.DrawText( text )
 	cam.End3D2D()
 end
-
 function ENT:Draw()
 	self:DrawModel()
 
@@ -54,6 +53,9 @@ function ENT:DrawTranslucent()
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Open the door and add a flask")
 	if (tiptext!=""&&enabled!=0&&entity==self) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+		end
 	end
 end

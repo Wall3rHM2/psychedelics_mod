@@ -46,21 +46,26 @@ local function Draw3D2DTip(text,ent,op)
 		surface.DrawText( text )
 	cam.End3D2D()
 end
-
 function ENT:Draw()
 	self:DrawModel()
+end
+function ENT:DrawTranslucent()
+	self:Draw()
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local quantity=self:GetNWInt( "psychedelics_quantity", 0 )
 	local tiptext = "Click 'e' to crop or 'e' +'shift' to add for selling" 
 	if (tiptext!=""&&enabled!=0&&entity==self) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+		end
 	end
 end
 local posx={"0.0","0.1","0.2","0.3","0.4"} --positions used for the new submaterial use by the 5 blotter sheets spawned
 local posy={"0.5","0.6","0.7","0.8","0.9"}
 local function update_skin(ent)
-	local data=ent:GetNWString("psychedelics_data","psychedelics_blotter_-1-1")
+	local data=ent:GetNWString("psychedelics_data","psychedelics_blotter_--1-1")
 	local dataTab=string.Split(    data,"-"    )
 	local subMaterial=dataTab[2]
 	if subMaterial == "" then return end

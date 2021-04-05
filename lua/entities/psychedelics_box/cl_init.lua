@@ -35,7 +35,6 @@ local function Draw3D2DTip(text,ent)
 		surface.DrawRect(-(box_width+w)/2,(-box_posy+box_height+h)/2 ,w+box_width,2)	--bottom line used for the box outline
 		if (ent:GetNWInt("psychedelics_progress",0)>0) then
 			local progress=ent:GetNWInt("psychedelics_progress",0)
-			--local middle_offset=Lerp(progress/100,0,(w+box_width))/2 --offset used to allign in the middle 
 			local total=w+box_width
 			local middle_offset=Lerp(progress/100,0,total) --offset used to allign in the middle 
 			surface.DrawRect( -middle_offset/2-(total-middle_offset)/2 ,(-box_posy+box_height+h)/2-16 ,middle_offset,16) --line that connects the text box to the flask
@@ -69,14 +68,19 @@ local function water_bar_draw(ent)
 	end
 	cam.End3D2D()
 end
-
 function ENT:Draw()
-	self:DrawModel()
-	water_bar_draw(self)
+	self:DrawModel(flags)
+end
+function ENT:DrawTranslucent(flags)
+	self:Draw(flags)
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Add mushroom substrate (0/3)")
 	if (tiptext!=""&&enabled!=0&&entity==self) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+			water_bar_draw(self)
+		end
 	end
 end

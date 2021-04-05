@@ -131,7 +131,7 @@ local Hallucinations={
 			door:EmitSound("doors/door1_move.wav")
 			local count=0
 			hook.Add("Think",drug_name.."_thedoorh_move",function()
-				if count<180 then
+				if count<180 and door:IsValid() then
 					theang:RotateAroundAxis(door:GetUp(),-0.5)
 					door:SetAngles(theang)
 					count=count+1

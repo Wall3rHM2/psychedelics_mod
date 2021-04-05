@@ -9,7 +9,6 @@
 	"$blendtintcoloroverbase" "0"
 
 	"$bumpMap"				"models/psychedelics/mushroom/substrate/substrate_nrm"
-	"$normalmapalphaenvmapmask" "1"
 	"$surfaceprop" "plastic"
 	"$model" 1
 

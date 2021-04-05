@@ -2,7 +2,6 @@ AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 
 include("shared.lua")
-local Ug=100
 local default_quantity = 25
 local posur={"0.0","0.1","0.2","0.3","0.4"} --x position for the 5sheet
 local posur2={"0.5","0.6","0.7","0.8","0.9"}  --y positions for the 5sheet
@@ -28,7 +27,7 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	local data = self:GetDataP()
 	local quantity = self:GetQuantity()
-	if data=="" then data = self:GetNWString("psychedelics_data","psychedelics_blotter_-1-1") end
+	if data=="" then data = self:GetNWString("psychedelics_data","psychedelics_blotter_--1-1") end
 	if quantity==0 then quantity = self:GetNWInt("psychedelics_quantity",default_quantity) end
 	self:SetNWString("psychedelics_data", data)
 	self:SetNWString("psychedelics_quantity", quantity)

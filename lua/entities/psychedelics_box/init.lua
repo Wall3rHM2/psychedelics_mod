@@ -50,10 +50,29 @@ local function grow(box)
 		box:SetNWInt("psychedelics_box_level",7)
 	end		
 end
+local function destroy(box)
+	box:SetBodygroup(1,0)
+	local table = ents.FindByClassAndParent("psychedelics_mushroom1",box)
+	if table ~= nil then
+		for k,mushroom1 in pairs(table) do
+			mushroom1:Remove()
+		end
+	end
+	local table = ents.FindByClassAndParent("psychedelics_mushroom2",box)
+	if table ~= nil then
+		for k,mushroom2 in pairs(table) do
+			mushroom2:Remove()
+		end
+	end
+	box:SetNWInt("psychedelics_box_level",0)
+	box:SetNWInt("psychedelics_progress",0)
+	box:SetNWString("psychedelics_tip_text","Add mushroom substrate (0/3)")
+
+end
 local function grow_progress(box)
 	if !box:IsValid() then return end
 	local level=box:GetNWInt("psychedelics_box_level",0)
-	if !(level>=3&&level<=6) then return end
+	if (level>=4&&level<=6)==false then return end
 	local progress=box:GetNWInt("psychedelics_progress",0)
 	local water=box:GetNWInt("psychedelics_water_level",100)
 	local minus_water=math.random(1,10)
@@ -61,15 +80,22 @@ local function grow_progress(box)
 	if random==1 then
 		progress=progress+1
 		if water-minus_water<0 then box:SetNWInt("psychedelics_water_level",0)
-		else box:SetNWInt("psychedelics_water_level",water-random) end
+		else water=water-random box:SetNWInt("psychedelics_water_level",water) end
 	end
+	if water<=0 then destroy(box) return end
 	if progress>=100 then 
 		level=level+1
 		box:SetNWInt("psychedelics_progress",0)
 		box:SetNWInt("psychedelics_box_level",level)
 		grow(box)
 	else box:SetNWInt("psychedelics_progress",progress) end
-	timer.Simple(0.1,function() grow_progress(box) end)
+	local delay = GetConVar( "psychedelics_mushroom_grow_rate" ):GetFloat()
+	timer.Simple(delay,function() grow_progress(box) end)
+end
+local function try(box)
+	if box:IsValid()==false then return end
+	if box:GetNWInt("psychedelics_box_level",0) == 4 then grow_progress(box) return end 
+	timer.Simple(0.05,function() try(box) end)
 end
 function ENT:Initialize()
 	self:SetModel("models/psychedelics/mushroom/box.mdl")
@@ -78,8 +104,10 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	self:GetPhysicsObject():Wake()
 	self:Activate()
-	self:SetNWVarProxy("psychedelics_box_level",function() 
-		if self:GetNWInt("psychedelics_box_level")==3 then grow_progress(self)  end
+	self:SetNWVarProxy("psychedelics_box_level",function(ent,name,oldval,newval) 
+		if newval == 4 then
+			try(self)
+		end
 	end)
 end
 	
@@ -88,7 +116,7 @@ if (activator:GetNWBool("psychedelics_used_box",false)) then return end
 	activator:SetNWBool("psychedelics_used_box",true)
 	timer.Simple(0.1,function() activator:SetNWBool("psychedelics_used_box",false) end) --avoids +use spam
 	local level=self:GetNWInt("psychedelics_box_level",0)
-	if level>3&&level<6 then
+	if level>=4 and level<=6 then
 		self:EmitSound("ambient/water/water_splash"..tostring(math.random(1,3))..".wav",75,100,1)
 		self:SetNWInt("psychedelics_water_level",100)
 	end

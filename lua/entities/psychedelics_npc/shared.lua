@@ -4,4 +4,4 @@ ENT.PrintName = "NPC"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.Category = "Psychedelics Mod"
-ENT.RenderGroup = RENDERGROUP_BOTH
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT

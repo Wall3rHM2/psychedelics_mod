@@ -46,15 +46,20 @@ local function Draw3D2DTip(text,ent,op)
 		surface.DrawText( text )
 	cam.End3D2D()
 end
-
 function ENT:Draw()
 	self:DrawModel()
+end
+function ENT:DrawTranslucent()
+	self:Draw(flags)
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local quantity=self:GetNWInt( "psychedelics_quantity", 0 )
 	local tiptext = "Click 'e' for use or 'e' +'shift' to add for selling"
 	if (tiptext!=""&&enabled!=0&&entity==self) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+		end
 	end
 end
 

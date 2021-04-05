@@ -27,14 +27,13 @@ if SERVER then
 		if material_valid == false then return end
 		local quantity = sheet:GetNWInt( "psychedelics_quantity", 0)
 		local type = sheet:GetNWString("psychedelics_type","lsd")
-		local data = "psychedelics_blotter_".."-"..material
+		local data = "psychedelics_sheet_".."-"..material
 		local dataTab = string.Split(	data,"-" )
-		local name = "psychedelics_blotter_".."-"..material
-		duplicator.StoreEntityModifier( sheet, "psychedelics_data", {data=data, matpos=i, --saves the data for duplication
-		type=type,quantity=quantity} ) 
+		local name = "psychedelics_sheet_".."-"..material
 		if material~="" then 
 			sheet:SetSubMaterial(0, "!"..name)
 			sheet:SetNWString("psychedelics_data",data)
+			sheet:SetDataP(data)
 			net.Start("update_blotter_sheet") --updates the upside submaterial of the 25 blotter sheet
 			net.WriteString(material)
 			net.WriteString("0")
@@ -47,6 +46,7 @@ if SERVER then
 	net.Receive( "PsychedelicsSheetSkin_Mat", SetSheetSkin)
 	--Hooks
 	hook.Add("PlayerDeath","PsychedelicsDeath",function(ply)
+		ply:SetNWInt("psychedelics_sell_money",0)
 		net.Start("PsychedelicsDeathL")
 		net.WriteEntity(ply)
 		net.Send(ply)
@@ -55,6 +55,7 @@ if SERVER then
 		net.Send(ply)
 	end)
 	hook.Add("PlayerSilentDeath","PsychedelicsDeathS",function(ply)
+		ply:SetNWInt("psychedelics_sell_money",0)
 		net.Start("PsychedelicsDeathL")
 		net.WriteEntity(ply)
 		net.Send(ply)
@@ -67,7 +68,8 @@ if SERVER then
 	CreateConVar("psychedelics_limitspawn_5sheet",8,FCVAR_ARCHIVE,"Limits how much of the 5sheet entity can be spawn by using the blotter_25sheet")
 	CreateConVar("psychedelics_limitspawn_1sheet",5,FCVAR_ARCHIVE,"Limits how much of the 1sheet entity can be spawn by using the blotter_5sheet")
 	CreateConVar("psychedelics_lsd_price",100,FCVAR_ARCHIVE,"Set the price of one lsd blotter for selling")
-	CreateConVar("psychedelics_mushroom_price",2500,FCVAR_ARCHIVE,"Set the price of one single mushroom")
+	CreateConVar("psychedelics_mushroom_price",1250,FCVAR_ARCHIVE,"Set the price of one single mushroom")
+	CreateConVar("psychedelics_mushroom_grow_rate",1.2,FCVAR_ARCHIVE,"Time in seconds to proccess the growing tick")
 	--Duplicator save
 	local function UpdateSavedBlotter( ply, ent, ddata )
 		ent:SetNWString("psychedelics_blotter_data",ddata.data)
@@ -75,7 +77,7 @@ if SERVER then
 		ent:SetNWInt("psychedelics_quantity",ddata.quantity)
 		ent:SetNWString("psychedelics_type",ddata.type) 
 	end
-	duplicator.RegisterEntityModifier( "sdrugs_blotter_data", UpdateSavedBlotter  )
+	--duplicator.RegisterEntityModifier( "sdrugs_blotter_data", UpdateSavedBlotter  )
 
 end
 

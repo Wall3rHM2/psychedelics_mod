@@ -46,9 +46,11 @@ local function Draw3D2DTip(text,ent)
 		surface.DrawText( text )
 	cam.End3D2D()
 end
-
 function ENT:Draw()
 	self:DrawModel()
+end
+function ENT:DrawTranslucent(flags)
+	self:Draw(flags)
 	local entity=LocalPlayer():GetEyeTrace().Entity
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext=self:GetNWString("psychedelics_tip_text","Add lysergic acid")

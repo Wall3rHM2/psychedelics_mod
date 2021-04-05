@@ -22,5 +22,7 @@ local function DrawPanel(ent)
 end
 function ENT:Draw()
 	self:DrawModel()
+end
+function ENT:DrawTranslucent(flags)
 	if (self:GetModel()=="models/props_interiors/refrigeratordoor02a.mdl") then DrawPanel(self) end --only draws a panel for the upper door
 end

@@ -17,11 +17,7 @@ end
 function ENT:Touch(entity)
 local level=entity:GetNWInt("psychedelics_box_level",0)
 
-if (entity:GetClass()=="psychedelics_box"&&
-
-
-
-	level<=2) then
+if (entity:GetClass()=="psychedelics_box"&&level<=2) then
 		if entity:GetNWBool("psychedelics_substrate_touched",false) then return end
 		entity:SetNWBool("psychedelics_substrate_touched",true)
 		timer.Simple(0.2,function() entity:SetNWBool("psychedelics_substrate_touched",false) end) --delay used to fix bugs related to tick

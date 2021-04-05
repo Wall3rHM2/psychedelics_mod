@@ -3,7 +3,6 @@
 	"$basetexture" "models/psychedelics/mushroom/spores/glass"
 	"$translucent" 1
 	"$bumpMap"				"models/psychedelics/mushroom/spores/glass_nrm"
-	"$normalmapalphaenvmapmask" "1"
 
 	"$surfaceprop" "glass"
 	"$model" 1

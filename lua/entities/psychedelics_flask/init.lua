@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self:GetPhysicsObject():Wake()
 	self:Activate()
 
-	--self:SetNWInt("psychedelics_flask_level",7) --debug stuff. 7 for pre cooling and 9 for post cooling
+	self:SetNWInt("psychedelics_flask_level",7) --debug stuff. 7 for pre cooling and 9 for post cooling
 	--self:SetNWString("psychedelics_tip_text","debug2")
  end
 	

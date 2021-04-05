@@ -9,7 +9,6 @@
 	"$blendtintcoloroverbase" "0"
 
 	"$bumpMap"				"models/psychedelics/mushroom/spores/metal_nrm"
-	"$normalmapalphaenvmapmask" "1"
 	"$surfaceprop" "metal"
 	"$model" 1
 

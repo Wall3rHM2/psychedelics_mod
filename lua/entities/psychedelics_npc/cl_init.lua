@@ -48,10 +48,16 @@ local function Draw3D2DTip(text,ent)
 end
 function ENT:Draw()
 	self:DrawModel()
+end
+function ENT:DrawTranslucent()
+	self:Draw()
 	local enabled=GetConVar("psychedelics_tips"):GetInt()
 	local tiptext="Click 'e' on me to sell LSD/mushrooms"
 	if (tiptext!=""&&enabled!=0) then
-		Draw3D2DTip(tiptext,self)
+		local distance = LocalPlayer():GetPos():Distance( self:GetPos()	)
+		if distance<=200 then
+			Draw3D2DTip(tiptext,self)
+		end
 	end
 end
 function ENT:Initialize()

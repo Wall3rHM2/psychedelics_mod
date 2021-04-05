@@ -29,8 +29,7 @@ function ENT:Initialize()
 	local data = self:GetDataP()
 	local type = self:GetTypeP()
 	local quantity = self:GetQuantity()
-	--self:SetNWString("psychedelics_data","psychedelics_blotter_-psychedelics/blotters/triangles") --debug
-	if quantity == 0 then  quantity=self:GetNWInt( "psychedelics_quantity", default_quantity ) end
+	if quantity == 0 then quantity=self:GetNWInt( "psychedelics_quantity", default_quantity ) end
 	if type=="" then type=self:GetNWString("psychedelics_type","lsd") end
 	if data=="" then data=self:GetNWString("psychedelics_data",defaultdata) end
 	self:SetNWInt( "psychedelics_quantity", quantity )
@@ -119,8 +118,8 @@ function ENT:Touch(flask) --function for add lsd substance to blotter sheet pape
 	quantity = quantity + 25
 	self:SetNWInt("psychedelics_quantity", quantity)
 	self:SetQuantity(quantity)
-	duplicator.StoreEntityModifier( self, "psychedelics_data", {data="psychedelics_blotter_".."-"..subMaterial, --saves the data for duplication
- 	type=type,quantity=quantity} )  
+	--duplicator.StoreEntityModifier( self, "psychedelics_data", {data="psychedelics_blotter_".."-"..subMaterial, --saves the data for duplication
+ 	--type=type,quantity=quantity} )  
 end
 	
 
