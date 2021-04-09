@@ -1,0 +1,5 @@
+hook.Add("InitPostEntity","psychedelicsPostEntity",function()
+	net.Start("psychedelicsPostEntity")
+	net.SendToServer()
+	hook.Remove("InitPostEntity","psychedelicsPostEntity")
+end)

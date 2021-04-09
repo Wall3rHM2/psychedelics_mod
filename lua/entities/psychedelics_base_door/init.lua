@@ -9,17 +9,13 @@ function ENT:Initialize()
 	self:GetPhysicsObject():Wake()
 	self:Activate()
 end
-	
-function ENT:Use( activator, caller )
-	local base=self:GetNWEntity("psychedelics_door_base",nil)
-	if (base:IsValid()==false) then return end
-	base:Use(activator,caller)
+
+function ENT:Use(activator, caller)
+	local base = self:GetNWEntity("psychedelicsDoorBase", nil)
+	if (base:IsValid() == false) then return end
+	base:Use(activator, caller)
 end
 
-function ENT:Touch(entity)
+function ENT:Touch(entity) end
 
-
-end
-	
-function ENT:Think()
-end
+function ENT:Think() end

@@ -9,28 +9,31 @@ function ENT:Initialize()
 	self:GetPhysicsObject():Wake()
 	self:Activate()
 end
-	
-function ENT:Use( activator, caller )
 
-end
+function ENT:Use(activator, caller) end
 
 function ENT:Touch(entity)
-local level=entity:GetNWInt("psychedelics_box_level",0)
+	local level = entity.level
+	if level == nil then level = 0 end
 
-if (entity:GetClass()=="psychedelics_box"&&level<=2) then
-		if entity:GetNWBool("psychedelics_substrate_touched",false) then return end
-		entity:SetNWBool("psychedelics_substrate_touched",true)
-		timer.Simple(0.2,function() entity:SetNWBool("psychedelics_substrate_touched",false) end) --delay used to fix bugs related to tick
-		level=level+1
-		entity:SetBodygroup(1,level)
-		entity:SetNWInt("psychedelics_box_level",level)
-		if level!=3 then
-			entity:SetNWString("psychedelics_tip_text","Add mushroom substrate ("..tostring(level).."/3)")
-		else entity:SetNWString("psychedelics_tip_text","Add mushroom spores") end
-		self:Remove()
-	end
-
-end
+	if not (entity:GetClass() == "psychedelics_box" and level <= 2) then return end
+	if entity.substrateTouched then	return end
+	entity.substrateTouched = true
+	timer.Simple(0.2, function()
+		entity.substrateTouched = false
+	end) -- delay used to fix bugs related to tick
 	
-function ENT:Think()
+		
+	level = level + 1
+	entity:SetBodygroup(1, level)
+	entity.level = level
+	if level ~= 3 then
+		entity:SetNWString("psychedelicsTipText", "Add mushroom substrate (" .. tostring(level) .."/3)")
+	else
+		entity:SetNWString("psychedelicsTipText", "Add mushroom spores")
+	end
+	self:Remove()
+
 end
+
+function ENT:Think() end

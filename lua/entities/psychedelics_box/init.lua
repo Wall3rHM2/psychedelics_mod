@@ -1,102 +1,132 @@
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 include("shared.lua")
+local offset = 8
+local positionsX = {offset, -offset, offset, -offset}
+local positionsY = {offset, offset, -offset, -offset}
 local function grow(box)
-	local level=box:GetNWInt("psychedelics_box_level",0) --tirar de comentario
-	local offset=8
-	if	level==5 then 
-		for i=1,4 do
-			local mushroom1=ents.Create("psychedelics_mushroom1")
-			local posx,posy=0 --ifman lmao
-			if i==1 then posx=offset posy=offset
-			elseif i==2 then posx=-offset posy=offset
-			elseif i==3 then posx=offset posy=-offset
-			else posx=-offset posy=-offset	end
+	local level = box.level
+	if level == nil then level = 0 end
+
+	if level == 5 then
+		for i = 1, 4 do
+			local mushroom1 = ents.Create("psychedelics_mushroom1")
+			local posX, posY = positionsX[i], positionsY[i]
 			mushroom1:Spawn()
 			mushroom1:GetPhysicsObject():EnableMotion(false)
 			local mins, maxs = mushroom1:GetModelBounds()
-			mushroom1:SetPos(box:LocalToWorld(Vector(posx,posy,17.9-mins.z)))
+			mushroom1:SetPos(box:LocalToWorld(Vector(posX, posY, 17.9 - mins.z)))
 			mushroom1:SetParent(box)
 		end
-		box:SetNWInt("psychedelics_box_level",5)
-	elseif level==6 then 
-		for k,mushroom1 in pairs(ents.FindByClassAndParent("psychedelics_mushroom1",box)) do
-			local mushroom2=ents.Create("psychedelics_mushroom2")
+		box.level = 5
+
+
+	elseif level == 6 then
+		--finds all active mushrooms and replace them
+		for k, mushroom1 in pairs(ents.FindByClassAndParent("psychedelics_mushroom1", box)) do
+			local mushroom2 = ents.Create("psychedelics_mushroom2")
 			mushroom2:Spawn()
 			mushroom2:GetPhysicsObject():EnableMotion(false)
 			local mins, maxs = mushroom2:GetModelBounds()
-			local mushroom1_pos_local=box:WorldToLocal(mushroom1:GetPos())
-			local pos=box:LocalToWorld(Vector( mushroom1_pos_local.x,mushroom1_pos_local.y,17.9-mins.z ))
+			local mushroom1LocalPos = box:WorldToLocal(mushroom1:GetPos())
+			local pos = box:LocalToWorld(Vector(mushroom1LocalPos.x, mushroom1LocalPos.y, 17.9 - mins.z))
 			mushroom2:SetPos(pos)
 			mushroom2:SetAngles(mushroom1:GetAngles())
 			mushroom2:SetParent(box)
 			mushroom1:Remove()
 		end
-		box:SetNWInt("psychedelics_box_level",6)
-	elseif level==7 then 
-		for k,mushroom2 in pairs(ents.FindByClassAndParent("psychedelics_mushroom2",box)) do
-			local mushroom3=ents.Create("psychedelics_mushroom3")
+		box.level = 6
+
+
+	elseif level == 7 then
+		for k, mushroom2 in pairs(ents.FindByClassAndParent("psychedelics_mushroom2", box)) do
+			local mushroom3 = ents.Create("psychedelics_mushroom3")
 			mushroom3:Spawn()
 			mushroom3:GetPhysicsObject():EnableMotion(false)
 			local mins, maxs = mushroom3:GetModelBounds()
-			local mushroom2_pos_local=box:WorldToLocal(mushroom2:GetPos())
-			local pos=box:LocalToWorld(Vector( mushroom2_pos_local.x,mushroom2_pos_local.y,17.9-mins.z ))
+			local mushroom2LocalPos = box:WorldToLocal(mushroom2:GetPos())
+			local pos = box:LocalToWorld(Vector(mushroom2LocalPos.x, mushroom2LocalPos.y, 17.9 - mins.z))
 			mushroom3:SetPos(pos)
 			mushroom3:SetAngles(mushroom2:GetAngles())
 			mushroom3:SetParent(box)
 			mushroom2:Remove()
 		end
-		box:SetNWString("psychedelics_tip_text","Press E to pickup the mushrooms")
-		box:SetNWInt("psychedelics_box_level",7)
-	end		
+		box:SetNWString("psychedelicsTipText", "Press 'e' to pickup the mushrooms")
+		box.level = 7
+	end
 end
-local function destroy(box)
-	box:SetBodygroup(1,0)
-	local table = ents.FindByClassAndParent("psychedelics_mushroom1",box)
+
+
+local function destroy(box) --used when water runs out
+	box:SetBodygroup(1, 0)
+
+	--remove active mushrooms
+	local table = ents.FindByClassAndParent("psychedelics_mushroom1", box)
 	if table ~= nil then
-		for k,mushroom1 in pairs(table) do
-			mushroom1:Remove()
-		end
+		for k, mushroom1 in pairs(table) do mushroom1:Remove() end
 	end
-	local table = ents.FindByClassAndParent("psychedelics_mushroom2",box)
+	local table = ents.FindByClassAndParent("psychedelics_mushroom2", box)
 	if table ~= nil then
-		for k,mushroom2 in pairs(table) do
-			mushroom2:Remove()
-		end
+		for k, mushroom2 in pairs(table) do mushroom2:Remove() end
 	end
-	box:SetNWInt("psychedelics_box_level",0)
-	box:SetNWInt("psychedelics_progress",0)
-	box:SetNWString("psychedelics_tip_text","Add mushroom substrate (0/3)")
+
+	box.level = 0
+	box:SetNWInt("psychedelicsProgress", 0)
+	box:SetNWString("psychedelicsTipText", "Add mushroom substrate (0/3)")
+	
 
 end
-local function grow_progress(box)
-	if !box:IsValid() then return end
-	local level=box:GetNWInt("psychedelics_box_level",0)
-	if (level>=4&&level<=6)==false then return end
-	local progress=box:GetNWInt("psychedelics_progress",0)
-	local water=box:GetNWInt("psychedelics_water_level",100)
-	local minus_water=math.random(1,10)
-	local random=math.random(0,1)
-	if random==1 then
-		progress=progress+1
-		if water-minus_water<0 then box:SetNWInt("psychedelics_water_level",0)
-		else water=water-random box:SetNWInt("psychedelics_water_level",water) end
+
+
+local function growProgress(box)
+	if not box:IsValid() then return end
+	local level = box.level
+	if level==nil then level = 0 end
+	if (level >= 4 and level <= 6) == false then return end --only execute when box has enough substrate
+
+
+	local progress = box:GetNWInt("psychedelicsProgress", 0)
+	local water = box:GetNWInt("psychedelicsWaterLevel", 100)
+	local minusWater = math.random(1, 10)
+	local random = math.random(0, 1)
+
+	--algorithm for growing tick
+	if random == 1 then
+		progress = progress + 1
+		if water - minusWater < 0 then
+			box:SetNWInt("psychedelicsWaterLevel", 0)
+		else
+			water = water - random
+			box:SetNWInt("psychedelicsWaterLevel", water)
+		end
 	end
-	if water<=0 then destroy(box) return end
-	if progress>=100 then 
-		level=level+1
-		box:SetNWInt("psychedelics_progress",0)
-		box:SetNWInt("psychedelics_box_level",level)
+	if water <= 0 then
+		destroy(box)
+		return
+	end
+
+	if progress >= 100 then
+		box:SetNWInt("psychedelicsProgress", 0)
+		box.level = level + 1
 		grow(box)
-	else box:SetNWInt("psychedelics_progress",progress) end
-	local delay = GetConVar( "psychedelics_mushroom_grow_rate" ):GetFloat()
-	timer.Simple(delay,function() grow_progress(box) end)
+	else
+		box:SetNWInt("psychedelicsProgress", progress)
+	end
+
+	local delay = GetConVar("psychedelics_mushroom_grow_rate"):GetFloat()
+	timer.Simple(delay, function() growProgress(box) end) --run the grow func after delay
 end
+
+
 local function try(box)
-	if box:IsValid()==false then return end
-	if box:GetNWInt("psychedelics_box_level",0) == 4 then grow_progress(box) return end 
-	timer.Simple(0.05,function() try(box) end)
+	if box:IsValid() == false then return end
+	if box.level == 4 and box:GetNWInt("psychedelicsProgress",0) == 0 then
+		growProgress(box)
+	end
+	timer.Simple(0.05, function() try(box) end) --keep checking when to execute growProgress
 end
+
+
 function ENT:Initialize()
 	self:SetModel("models/psychedelics/mushroom/box.mdl")
 	self:PhysicsInit(SOLID_VPHYSICS)
@@ -104,37 +134,35 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	self:GetPhysicsObject():Wake()
 	self:Activate()
-	self:SetNWVarProxy("psychedelics_box_level",function(ent,name,oldval,newval) 
-		if newval == 4 then
-			try(self)
-		end
-	end)
+	try(self)
 end
-	
-function ENT:Use( activator, caller )
-if (activator:GetNWBool("psychedelics_used_box",false)) then return end
-	activator:SetNWBool("psychedelics_used_box",true)
-	timer.Simple(0.1,function() activator:SetNWBool("psychedelics_used_box",false) end) --avoids +use spam
-	local level=self:GetNWInt("psychedelics_box_level",0)
-	if level>=4 and level<=6 then
-		self:EmitSound("ambient/water/water_splash"..tostring(math.random(1,3))..".wav",75,100,1)
-		self:SetNWInt("psychedelics_water_level",100)
+
+function ENT:Use(activator, caller)
+	if activator.usedBox then return end
+	activator.usedBox = true
+	timer.Simple(0.1, function()
+		activator.usedBox = false
+	end) -- avoids +use spam
+
+	local level = self.level
+	if level == nil then level = 0 end
+	if level >= 4 and level <= 6 then
+		self:EmitSound("ambient/water/water_splash" ..tostring(math.random(1, 3)) .. ".wav", 75, 100, 1)
+		self:SetNWInt("psychedelicsWaterLevel", 100)
 	end
-	if level==7 then
-		for k,v in pairs(ents.FindByClassAndParent( "psychedelics_mushroom3", self )) do
+
+	--when the mushrooms have fully growed
+	if level == 7 then
+		for k, v in pairs(ents.FindByClassAndParent("psychedelics_mushroom3", self)) do
 			v:SetParent(nil)
 			v:GetPhysicsObject():EnableMotion(true)
 		end
-		self:SetNWInt("psychedelics_box_level",0)
-		self:SetBodygroup(1,0)
-		self:SetNWString("psychedelics_tip_text","Add mushroom substrate (0/3)")
+		self.level = 0
+		self:SetBodygroup(1, 0)
+		self:SetNWString("psychedelicsTipText", "Add mushroom substrate (0/3)")
 	end
 end
 
-function ENT:Touch(entity)
+function ENT:Touch(entity) end
 
-
-end
-	
-function ENT:Think()
-end
+function ENT:Think() end

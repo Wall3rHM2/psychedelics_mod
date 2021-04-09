@@ -17,10 +17,11 @@ function ENT:Initialize( ) --This function is run when the entity is created so 
 end
 function ENT:AcceptInput(name, activator, caller )
 	if name == "Use" and activator:IsPlayer() then
-		local money = activator:GetNWInt("psychedelics_sell_money",0)
+		local money = activator.moneyP
+		if money == nil then money = 0 end
 		if money <= 0 then return end
 		activator:addMoney(money)
-    	activator:SetNWInt("psychedelics_sell_money",0)
+    	activator.moneyP = 0
     	activator:SendLua("chat.AddText('You got "..tostring(money).."$ from selling')")
 	end
 end
