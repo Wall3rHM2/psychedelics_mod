@@ -4,14 +4,9 @@ if SERVER then
 	util.AddNetworkString( "psychedelicsDeathS" ) --for shroom
 	util.AddNetworkString( "psychedelicsStartLSD" )
 	util.AddNetworkString( "psychedelicsStartShroom" )
-	util.AddNetworkString( "psychedelicsPostEntity" )
 
 	resource.AddWorkshop( "2446913601" ) --content
 
-	--Net messages
-	net.Receive("psychedelicsPostEntity", function(len, ply)
-		ply:SetNWBool("psychedelicsPostInit", true)
-	end)
 
 	local function setSheetSkin(len, ply)
 		local sheet = net.ReadEntity()

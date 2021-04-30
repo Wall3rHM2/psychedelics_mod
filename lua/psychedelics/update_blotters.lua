@@ -16,6 +16,6 @@ if CLIENT then
         local data = net.ReadString()
         local ent = net.ReadEntity()
         if ent:IsValid() == false then return end
-        blotter.updateSkin(ent)
+        blotter.updateSkin(ent, data)
     end)
 end

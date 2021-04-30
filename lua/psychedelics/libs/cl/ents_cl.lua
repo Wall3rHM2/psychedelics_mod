@@ -63,7 +63,7 @@ local function draw3D2DTip(text, ent, op) --op sets height for other tip boxes
     surface.DrawText(text)
     cam.End3D2D()
 end
-local dist = 200*200
+local dist = 600*600
 local function checkDist(ent) -- used to check if the distance is valid
     return ( LocalPlayer():GetPos():DistToSqr(ent:GetPos()) <= dist )
 end

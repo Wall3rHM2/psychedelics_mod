@@ -309,6 +309,6 @@ net.Receive("psychedelicsStartShroom", function()
     end
 
     ug = ug + ugSum
-    maxOverlay = ug / 50000
+    maxOverlay = ug / 2000
     multBlur = multBlur + ug
 end)

@@ -158,7 +158,7 @@ function ENT:Initialize()
 	self:Activate()
 	self.isOpen = false --default door animation
 	self.angle = 0	--default door angle
-	adjustTemp(self) --debug / print; remove comment pls
+	adjustTemp(self) 
 	adjustProgress(self)
 	initDoors(self)
 	self:SetNWInt("psychedelicsTemp", 1)

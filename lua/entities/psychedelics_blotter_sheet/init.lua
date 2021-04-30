@@ -21,7 +21,6 @@ function ENT:Initialize()
 	--self:SetQuantity(200)
 	local data = self:GetDataP()
 	local quantity = self:GetQuantity()
-	print(quantity)
 	if data == "" then
 		data = defaultData
 		self:SetDataP( data )

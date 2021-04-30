@@ -59,7 +59,6 @@ function ENT:Use(activator, caller)
 	end
 
 	-- Calls the LSD effect in client
-	print(quant)
 	net.Start("psychedelicsStartLSD")
 	net.WriteInt(quant,20)
 	net.Send(caller)

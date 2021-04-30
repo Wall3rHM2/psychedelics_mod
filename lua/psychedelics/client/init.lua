@@ -1,5 +1,4 @@
 hook.Add("InitPostEntity","psychedelicsPostEntity",function()
-	net.Start("psychedelicsPostEntity")
-	net.SendToServer()
+	LocalPlayer().psychedelicsPostEnt = true
 	hook.Remove("InitPostEntity","psychedelicsPostEntity")
 end)

@@ -1,9 +1,3 @@
-=======================================NOTE===========================================================
-Hello! Thank you so much for buying this addon and making this possible. It took A LOT of time and effort, so it would be very nice
-for you rate it on Gmod Store. I hope you enjoy it!
-
-
-
 =======================================Recommend Config ( important )==========================================================
 1. As you may notice, if the LSD sheet had no protection, players would be able to spawn a lot of entities; thus likely
 causing lag. By default, this addon has a configuration that limits players from cropping lots of pieces of the sheet. To see

@@ -16,8 +16,8 @@ if CLIENT then
         {"0.5", "0.6", "0.7", "0.8", "0.9"}
     }
     
-    local function updateSkin(ent)
-        local data = ent:GetDataP()
+    local function updateSkin(ent,datap)
+        local data = datap or ent:GetDataP()
         if data=="" then data = "psychedelicsSheet--1" end
         local tab = string.Split(data, "-")
         local subMaterial = tab[2]
@@ -27,9 +27,6 @@ if CLIENT then
         local scaleX = scalesX[type+1]
         local scaleY = scalesY[type+1]
         local posX, posY = "0","0"--default values that already work for sheet
-        print(data)
-        print(type)
-        print("a,b,c  ",a,b,c)
         if type == 1 then   --generates the 25sheet positions
             posX = positionsX[1][ a ]
             posY = positionsY[1][ a ]
@@ -59,14 +56,13 @@ if CLIENT then
         };
         CreateMaterial(data, "VertexLitGeneric", matTable)
         ent:SetSubMaterial(0, "!" .. data)
-        print(data)
     end
 
     
     local function tryUpdate(ent)
         if ent:IsValid() == false then return end
         if ent:GetNWBool("psychedelicsInitialized", false) and
-            LocalPlayer():GetNWBool("psychedelicsPostInit", false) then
+            LocalPlayer().psychedelicsPostEnt then
             updateSkin(ent)
         else
             timer.Simple(0.01, function() tryUpdate(ent) end)

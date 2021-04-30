@@ -3,7 +3,6 @@ local lib = include("psychedelics/libs/cl/ents_cl.lua")
 function ENT:Draw()
 	self:DrawModel()
 end
-print("psychedelics/libs/cl/ents_cl.lua")
 function ENT:DrawTranslucent()
 	local tipText=self:GetNWString("psychedelicsTipText","Open the door and add a flask")
 	local entity = LocalPlayer():GetEyeTrace().Entity
